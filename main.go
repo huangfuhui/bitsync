@@ -1,11 +1,10 @@
 package main
 
 import (
-	_ "bitsync/bit/routers"
 	"github.com/astaxie/beego"
+	_ "bitsync/models"
 )
 
 func main() {
 	beego.Run()
 }
-
