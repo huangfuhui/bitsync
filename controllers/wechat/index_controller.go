@@ -4,6 +4,8 @@ import (
 	"bitsync/controllers"
 	"sort"
 	"crypto/sha1"
+	"fmt"
+	"github.com/astaxie/beego"
 )
 
 type IndexController struct {
@@ -17,8 +19,10 @@ func (c *IndexController) Auth() {
 	nonce := c.GetString("nonce")
 	echostr := c.GetString("echostr")
 
+	token := beego.AppConfig.String("wechat_token")
+
 	// 将参数排序和拼接
-	str := sort.StringSlice{signature, timestamp, nonce, echostr}
+	str := sort.StringSlice{token, timestamp, nonce}
 	sort.Sort(str)
 	sortStr := ""
 	for _, v := range str {
@@ -28,14 +32,16 @@ func (c *IndexController) Auth() {
 	// 进行sha1加密
 	sh := sha1.New()
 	sh.Write([]byte(sortStr))
-	encryptStr := sh.Sum(nil)
+	encryptStr := fmt.Sprintf("%x", sh.Sum(nil))
 
 	// 将本地计算的签名和微信传递过来的签名进行对比
-	if string(encryptStr) == signature {
-		c.Ctx.WriteString(signature)
+	if encryptStr == signature {
+		c.Ctx.WriteString(echostr)
+
+		return
 	}
 
-	c.Ctx.WriteString("Invalid signature")
+	c.Ctx.WriteString("Invalid Signature")
 }
 
 // 关注时的欢迎语
