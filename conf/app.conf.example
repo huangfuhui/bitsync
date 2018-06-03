@@ -1,0 +1,19 @@
+# App配置
+appname = "bitsync"
+httpaddr = "127.0.0.1"
+httpport = 8080
+autorender = false
+runmode = "prod"
+
+# MySQL数据库
+mysql_user = "root"
+mysql_password = ""
+mysql_host = "127.0.0.1"
+mysql_port = 3306
+mysql_db = "bitsync"
+
+# 微信开发配置
+wechat_app_id = ""
+wechat_app_secret = ""
+wechat_token = ""
+wechat_encoding_aes_key = ""
