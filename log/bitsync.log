@@ -1,2 +1,200 @@
-2018/06/03 13:30:54.097 [I] [main.go:22] 初始化完成,启动应用... 
-2018/06/03 13:30:54.104 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:26:16.625 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:26:16.631 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:26:38.522 [E] [index_controller.go:44] 解析文本消息失败: <xml>  <ToUserName>< ![CDATA[toUser] ]></ToUserName>  <FromUserName>< ![CDATA[fromUser] ]></FromUserName>  <CreateTime>1348831860</CreateTime>  <MsgType>< ![CDATA[text] ]></MsgType>  <Content>< ![CDATA[this is a test] ]></Content>  <MsgId>1234567890123456</MsgId>  </xml> 
+2018/06/03 18:26:38.528 [E] [index_controller.go:45] non-pointer passed to Unmarshal 
+2018/06/03 18:26:38.531 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:26:38] "POST /wechat/auth HTTP/1.1 200 0" 0.009753  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:27:09.924 [E] [index_controller.go:44] 解析文本消息失败: <xml>  <ToUserName>< ![CDATA[toUser] ]></ToUserName>  <FromUserName>< ![CDATA[fromUser] ]></FromUserName>  <CreateTime>1348831860</CreateTime>  <MsgType>< ![CDATA[text] ]></MsgType>  <Content>< ![CDATA[this is a test] ]></Content>  <MsgId>1234567890123456</MsgId>  </xml> 
+2018/06/03 18:27:09.928 [E] [index_controller.go:45] non-pointer passed to Unmarshal 
+2018/06/03 18:27:09.937 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:27:09] "POST /wechat/auth HTTP/1.1 200 0" 0.012863  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:27:15.057 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:27:15.063 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:27:22.353 [E] [index_controller.go:44] 解析文本消息失败: <xml>  <ToUserName>< ![CDATA[toUser] ]></ToUserName>  <FromUserName>< ![CDATA[fromUser] ]></FromUserName>  <CreateTime>1348831860</CreateTime>  <MsgType>< ![CDATA[text] ]></MsgType>  <Content>< ![CDATA[this is a test] ]></Content>  <MsgId>1234567890123456</MsgId>  </xml> 
+2018/06/03 18:27:22.361 [E] [index_controller.go:45] XML syntax error on line 1: expected element name after < 
+2018/06/03 18:27:22.372 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:27:22] "POST /wechat/auth HTTP/1.1 200 0" 0.021740  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:28:09.897 [E] [index_controller.go:44] 解析文本消息失败: <xml>
+    <ToUserName>< ![CDATA[toUser] ]>
+    </ToUserName>
+    <FromUserName>< ![CDATA[fromUser] ]>
+    </FromUserName>
+    <CreateTime>1348831860</CreateTime>
+    <MsgType>< ![CDATA[text] ]>
+    </MsgType>
+    <Content>< ![CDATA[this is a test] ]>
+    </Content>
+    <MsgId>1234567890123456</MsgId>
+</xml> 
+2018/06/03 18:28:09.903 [E] [index_controller.go:45] XML syntax error on line 2: expected element name after < 
+2018/06/03 18:28:09.904 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:28:09] "POST /wechat/auth HTTP/1.1 200 0" 0.007400  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:28:47.893 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:28:47.901 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:28:58.702 [E] [index_controller.go:44] 解析文本消息失败: 
+<xml>
+    <ToUserName>< ![CDATA[toUser] ]>
+    </ToUserName>
+    <FromUserName>< ![CDATA[fromUser] ]>
+    </FromUserName>
+    <CreateTime>1348831860</CreateTime>
+    <MsgType>< ![CDATA[text] ]>
+    </MsgType>
+    <Content>< ![CDATA[this is a test] ]>
+    </Content>
+    <MsgId>1234567890123456</MsgId>
+</xml> 
+2018/06/03 18:28:58.734 [E] [index_controller.go:45] XML syntax error on line 2: expected element name after < 
+2018/06/03 18:28:58.742 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:28:58] "POST /wechat/auth HTTP/1.1 200 0" 0.040972  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:34:45.776 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:34:45.782 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:34:49.483 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:34:49] "POST /wechat/auth HTTP/1.1 200 0" 0.018727  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:35:52.487 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:35:52.494 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:35:56.539 [D] [index_controller.go:47] {dqweq
+     2121
+     1348831860 ff
+     c
+     1234567890123456} 
+2018/06/03 18:35:56.558 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:35:56] "POST /wechat/auth HTTP/1.1 200 0" 0.018866  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:37:57.354 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:37:57.359 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:39:11.099 [D] [index_controller.go:47] 解析用户文本消息成功, openid:2121
+    ,  
+2018/06/03 18:39:23.676 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:39:11] "POST /wechat/auth HTTP/1.1 200 0" 12.577241  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:39:31.813 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:39:31.824 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:39:35.248 [D] [index_controller.go:47] 解析用户文本消息成功, openid:2121
+    , content:c
+     
+2018/06/03 18:39:35.256 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:39:35] "POST /wechat/auth HTTP/1.1 200 0" 0.008501  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:40:05.168 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:40:05.173 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:40:07.880 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:40:07] "POST /wechat/auth HTTP/1.1 200 0" 0.000873  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:43:33.380 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:43:33.385 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:43:36.196 [E] [index_controller.go:43] 解析用户文本消息失败: 
+<xml>
+    <ToUserName>dqweq
+    </ToUserName>
+    <FromUserName>< ![CDATA[toUser] ]>
+    </FromUserName>
+    <CreateTime>1348831860</CreateTime>
+    <MsgType>ff
+    </MsgType>
+    <Content>c
+    </Content>
+    <MsgId>1234567890123456</MsgId>
+</xml> 
+2018/06/03 18:43:36.231 [E] [index_controller.go:44] XML syntax error on line 4: expected element name after < 
+2018/06/03 18:43:36.233 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:43:36] "POST /wechat/auth HTTP/1.1 200 0" 0.037174  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:46:16.979 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:46:16.987 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:46:21.259 [E] [index_controller.go:43] 解析用户文本消息失败: 
+<xml>
+    <ToUserName>dqweq
+    </ToUserName>
+    <FromUserName>< ![CDATA[toUser] ]>
+    </FromUserName>
+    <CreateTime>1348831860</CreateTime>
+    <MsgType>ff
+    </MsgType>
+    <Content>c
+    </Content>
+    <MsgId>1234567890123456</MsgId>
+</xml> 
+2018/06/03 18:46:21.302 [E] [index_controller.go:44] xml: invalid tag in field ToUserName of type util.TextMsg: "ToUserName,cdata" 
+2018/06/03 18:46:21.303 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:46:21] "POST /wechat/auth HTTP/1.1 200 0" 0.044407  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:46:47.268 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:46:47.275 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:48:48.426 [D] [index_controller.go:49] 解析用户文本消息成功, openid:toUser
+    , content:c
+     
+2018/06/03 18:48:48.436 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 06:48:48] "POST /wechat/auth HTTP/1.1 200 0" 0.011586  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 18:50:26.934 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:50:26.940 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:51:01.636 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:51:01.642 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:52:46.826 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:52:46.833 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:54:39.455 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:54:39.460 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 18:55:16.934 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 18:55:16.939 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 19:09:21.809 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 19:09:21.815 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 19:09:38.029 [D] [index_controller.go:51] 解析用户文本消息成功, openid:toUser
+    , content:你好，ceshi 123
+     
+2018/06/03 19:09:38.033 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:09:38] "POST /wechat/auth HTTP/1.1 200 0" 0.004623  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:11:39.425 [D] [index_controller.go:51] 解析用户文本消息成功, openid:toUser
+    , content:你好，ceshi 123
+     
+2018/06/03 19:11:39.429 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:11:39] "POST /wechat/auth HTTP/1.1 200 0" 0.003729  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:12:14.402 [D] [index_controller.go:51] 解析用户文本消息成功, openid:toUser, content:你好，ceshi 123 
+2018/06/03 19:12:14.403 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:12:14] "POST /wechat/auth HTTP/1.1 200 0" 0.001117  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:13:26.268 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 19:13:26.274 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 19:13:29.187 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:13:29.192 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:13:29] "POST /wechat/auth HTTP/1.1 200 0" 0.006348  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:22:00.781 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 19:22:00.788 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 19:22:16.103 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:22:16.106 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:22:16] "POST /wechat/auth HTTP/1.1 200 0" 0.003080  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:22:58.624 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 19:22:58.630 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 19:23:02.220 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:23:02.224 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:23:02] "POST /wechat/auth HTTP/1.1 200 0" 0.004993  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:25:41.956 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 19:25:41.963 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 19:25:44.205 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:25:44.207 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:25:44] "POST /wechat/auth HTTP/1.1 200 0" 0.002267  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:26:09.198 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 19:26:09.205 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 19:26:20.019 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:26:20.021 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:26:20] "POST /wechat/auth HTTP/1.1 200 0" 0.003147  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:27:32.732 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 19:27:32.738 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080
+2018/06/03 19:27:40.333 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:27:40.336 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:27:40] "POST /wechat/auth HTTP/1.1 200 0" 0.003891  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:27:45.816 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:27:45.817 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:27:45] "POST /wechat/auth HTTP/1.1 200 0" 0.001218  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:27:48.051 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:27:48.052 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:27:48] "POST /wechat/auth HTTP/1.1 200 0" 0.001205  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:28:02.854 [E] [index_controller.go:43] 解析用户文本消息失败: 
+<xml>ff<>
+    <ToUserName>dqw1231s12d13t6u7obeeq</ToUserName>
+    <FromUserName><![CDATA[dqw1231s12d13t6u7obeeq]]></FromUserName>
+    <CreateTime>1348831860</CreateTime>
+    <MsgType>ff</MsgType>
+    <Content>你好，ceshi 123</Content>
+    <MsgId>1234567890123456</MsgId>
+</xml> 
+2018/06/03 19:28:02.856 [E] [index_controller.go:44] XML syntax error on line 1: expected element name after < 
+2018/06/03 19:28:02.856 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:28:02] "POST /wechat/auth HTTP/1.1 200 0" 0.002327  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:28:11.442 [D] [index_controller.go:51] 解析用户文本消息成功, openid:dqw1231s12d13t6u7obeeq, content:你好，ceshi 123 
+2018/06/03 19:28:11.443 [D] [server.go:2694] 127.0.0.1 - - [03/Jun/2018 07:28:11] "POST /wechat/auth HTTP/1.1 200 0" 0.001104  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36
+
+2018/06/03 19:29:37.833 [I] [main.go:22] 初始化完成,启动应用... 
+2018/06/03 19:29:37.839 [I] [asm_amd64.s:2361] http server Running on http://127.0.0.1:8080

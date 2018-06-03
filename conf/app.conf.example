@@ -3,7 +3,8 @@ appname = "bitsync"
 httpaddr = "127.0.0.1"
 httpport = 8080
 autorender = false
-runmode = "prod"
+copyrequestbody = true
+runmode = "dev"
 
 # MySQL数据库
 mysql_user = "root"

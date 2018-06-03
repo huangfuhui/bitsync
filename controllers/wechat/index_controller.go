@@ -35,5 +35,30 @@ func (c *IndexController) Welcome() {
 
 // 自动回复
 func (c *IndexController) AutoReply() {
+	xmlBody := c.Ctx.Input.RequestBody
 
+	res, err := util.ParseMsg(xmlBody)
+
+	if err != nil {
+		beego.Error("解析用户文本消息失败: " + "\n" + string(xmlBody))
+		beego.Error(err)
+
+		c.Ctx.WriteString("")
+
+		return
+	}
+
+	beego.Debug("解析用户文本消息成功, openid:" + res.FromUserName + ", content:" + res.Content)
+
+	// TODO:消息排重
+
+	replay, err := util.ReplayTextMsg(res.FromUserName, res.Content)
+	if err != nil {
+		c.Ctx.WriteString("")
+
+		return
+	}
+
+	replayMsg := "收到测试信息: " + string(replay)
+	c.Ctx.WriteString(replayMsg)
 }
