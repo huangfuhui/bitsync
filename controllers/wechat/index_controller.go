@@ -2,9 +2,7 @@ package wechat
 
 import (
 	"bitsync/controllers"
-	"sort"
-	"crypto/sha1"
-	"fmt"
+	"bitsync/util"
 	"github.com/astaxie/beego"
 )
 
@@ -19,32 +17,23 @@ func (c *IndexController) Auth() {
 	nonce := c.GetString("nonce")
 	echostr := c.GetString("echostr")
 
-	token := beego.AppConfig.String("wechat_token")
+	res, ok := util.AuthVerify(signature, timestamp, nonce, echostr)
 
-	// 将参数排序和拼接
-	str := sort.StringSlice{token, timestamp, nonce}
-	sort.Sort(str)
-	sortStr := ""
-	for _, v := range str {
-		sortStr += v
+	if ok {
+		beego.Info("微信签名验证通过,成功接入微信开发平台.")
+	} else {
+		beego.Info("微信签名验证不通过,拒绝接入.")
 	}
 
-	// 进行sha1加密
-	sh := sha1.New()
-	sh.Write([]byte(sortStr))
-	encryptStr := fmt.Sprintf("%x", sh.Sum(nil))
-
-	// 将本地计算的签名和微信传递过来的签名进行对比
-	if encryptStr == signature {
-		c.Ctx.WriteString(echostr)
-
-		return
-	}
-
-	c.Ctx.WriteString("Invalid Signature")
+	c.Ctx.WriteString(res)
 }
 
 // 关注时的欢迎语
 func (c *IndexController) Welcome() {
+
+}
+
+// 自动回复
+func (c *IndexController) AutoReply() {
 
 }
