@@ -52,13 +52,13 @@ func (c *IndexController) AutoReply() {
 
 	// TODO:消息排重
 
-	replay, err := util.ReplayTextMsg(res.FromUserName, res.Content)
+	replay, err := util.ReplayTextMsg(res.FromUserName, "收到的测试信息: "+res.Content)
 	if err != nil {
 		c.Ctx.WriteString("")
 
 		return
 	}
 
-	replayMsg := "收到测试信息: " + string(replay)
+	replayMsg := string(replay)
 	c.Ctx.WriteString(replayMsg)
 }

@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-var token, appId string
+var accountId, token, appId string
 
 type CDATA struct {
 	Content string `xml:",cdata"`
@@ -36,6 +36,7 @@ type ReplyTextMsg struct {
 }
 
 func init() {
+	accountId = beego.AppConfig.String("wechat_account_id")
 	appId = beego.AppConfig.String("wechat_app_id")
 	token = beego.AppConfig.String("wechat_token")
 }
@@ -77,11 +78,11 @@ func ReplayTextMsg(openid, msg string) ([]byte, error) {
 	currentTime := strconv.FormatInt(time.Now().Unix(), 10)
 	replay := ReplyTextMsg{
 		ToUserName:   CDATA{openid},
-		FromUserName: CDATA{appId},
+		FromUserName: CDATA{accountId},
 		CreateTime:   currentTime,
 		MsgType:      CDATA{"text"},
 		Content:      CDATA{msg},
 	}
 
-	return xml.MarshalIndent(replay, "  ", "    ")
+	return xml.MarshalIndent(replay, "", "  ")
 }
