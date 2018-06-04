@@ -7,7 +7,7 @@ import (
 
 func init() {
 	ns := beego.NewNamespace("/wechat",
-		beego.NSRouter("/auth", &wechat.IndexController{}, "get:Auth;post:AutoReply"),
+		beego.NSRouter("/auth", &wechat.IndexController{}, "get:Auth;post:Dispatch"),
 		beego.NSRouter("/welcome", &wechat.IndexController{}, "get:Welcome"),
 	)
 

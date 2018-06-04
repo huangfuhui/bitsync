@@ -28,37 +28,71 @@ func (c *IndexController) Auth() {
 	c.Ctx.WriteString(res)
 }
 
+// 分发事件
+func (c *IndexController) Dispatch() {
+	signature := c.GetString("signature")
+	timestamp := c.GetString("timestamp")
+	nonce := c.GetString("nonce")
+	echostr := c.GetString("echostr")
+
+	res, ok := util.AuthVerify(signature, timestamp, nonce, echostr)
+
+	if !ok {
+		c.Ctx.WriteString(res)
+
+		return
+	}
+
+	xmlBody := c.Ctx.Input.RequestBody
+
+	// 解析XML
+	base, err := util.ParseBase(xmlBody)
+
+	if err != nil {
+		beego.Error("解析微信推送数据失败: " + "\n" + string(xmlBody))
+		beego.Error(err)
+
+		c.Ctx.WriteString("")
+
+		return
+	} else {
+		beego.Debug("解析微信推送数据成功, openid:" + base.FromUserName + ", msgtype:" + base.MsgType)
+	}
+
+	var response string
+	switch base.MsgType {
+	case util.MSGTYPE_TEXT:
+		response = c.autoReply(xmlBody)
+	default:
+		response = "success"
+	}
+
+	c.Ctx.WriteString(response)
+}
+
 // 关注时的欢迎语
-func (c *IndexController) Welcome() {
+func (c *IndexController) welcome() {
 
 }
 
 // 自动回复
-func (c *IndexController) AutoReply() {
-	xmlBody := c.Ctx.Input.RequestBody
-
+func (c *IndexController) autoReply(xmlBody []byte) string {
 	res, err := util.ParseMsg(xmlBody)
 
 	if err != nil {
 		beego.Error("解析用户文本消息失败: " + "\n" + string(xmlBody))
 		beego.Error(err)
 
-		c.Ctx.WriteString("")
-
-		return
+		return ""
 	}
-
-	beego.Debug("解析用户文本消息成功, openid:" + res.FromUserName + ", content:" + res.Content)
 
 	// TODO:消息排重
 
-	replay, err := util.ReplayTextMsg(res.FromUserName, "收到的测试信息: "+res.Content)
+	// 拼接回复信息
+	replay, err := util.ReplayTextMsg(res.Base.FromUserName, "收到的测试信息: "+res.Content)
 	if err != nil {
-		c.Ctx.WriteString("")
-
-		return
+		return ""
 	}
 
-	replayMsg := string(replay)
-	c.Ctx.WriteString(replayMsg)
+	return string(replay)
 }
