@@ -61,6 +61,12 @@ type ReplyTextMsg struct {
 	Content      CDATA  `xml:"Content"`
 }
 
+// 关注/取关事件
+type SubscribeEvent struct {
+	BaseData
+	Event string `xml:"Event"`
+}
+
 func init() {
 	accountId = beego.AppConfig.String("wechat_account_id")
 	appId = beego.AppConfig.String("wechat_app_id")
@@ -90,7 +96,7 @@ func AuthVerify(signature, timestamp, nonce, echostr string) (string, bool) {
 	return "Invalid Signature.", false
 }
 
-// 解析事件推送基础数据
+// 解析推送基础数据
 func ParseBase(base []byte) (BaseData, error) {
 	baseEvent := BaseData{}
 
@@ -120,4 +126,13 @@ func ReplayTextMsg(openid, msg string) ([]byte, error) {
 	}
 
 	return xml.MarshalIndent(replay, "", "  ")
+}
+
+// 解析关注/取关事件
+func ParseSubEvent(event []byte) (SubscribeEvent, error) {
+	subEvent := SubscribeEvent{}
+
+	err := xml.Unmarshal(event, &subEvent)
+
+	return subEvent, err
 }
