@@ -5,6 +5,7 @@ import (
 	_ "bitsync/models"
 	_ "bitsync/routers"
 	"github.com/astaxie/beego/logs"
+	"bitsync/services"
 )
 
 func init() {
@@ -16,6 +17,9 @@ func init() {
 
 	beego.SetLogFuncCall(true)
 	beego.SetLogger(logs.AdapterFile, `{"filename":"log/bitsync.log","daily":true,"maxdays":7}`)
+
+	// 启动价格监控
+	go services.Watch()
 }
 
 func main() {

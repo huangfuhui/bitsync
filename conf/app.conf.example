@@ -19,3 +19,6 @@ wechat_app_id = ""
 wechat_app_secret = ""
 wechat_token = ""
 wechat_encoding_aes_key = ""
+
+# 引入价格监控配置
+include "watch/watch.conf"
