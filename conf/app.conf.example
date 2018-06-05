@@ -13,6 +13,12 @@ mysql_host = "127.0.0.1"
 mysql_port = 3306
 mysql_db = "bitsync"
 
+# Redis
+redis_scheme = "tcp"
+redis_host = "127.0.0.1"
+redis_port = 6379
+redis_password =
+
 # 微信开发配置
 wechat_account_id = ""
 wechat_app_id = ""

@@ -13,6 +13,7 @@ import (
 	"strings"
 	"strconv"
 	"encoding/json"
+	"github.com/gomodule/redigo/redis"
 )
 
 // K线数据结构
@@ -28,6 +29,21 @@ type KLine struct {
 		Low    float64 `json:"low"`
 		High   float64 `json:"high"`
 		Vol    float64 `json:"vol"`
+	}
+}
+
+var redisCli redis.Conn
+
+func init() {
+	redisScheme := beego.AppConfig.String("redis_scheme")
+	redisHost := beego.AppConfig.String("redis_host")
+	redisPort := beego.AppConfig.String("redis_port")
+
+	var err error
+	dbNum := redis.DialDatabase(1)
+	redisCli, err = redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	if err != nil {
+		beego.Error(err)
 	}
 }
 
@@ -52,6 +68,7 @@ func Watch() {
 	defer func() {
 		beego.Info("【火币】websocket通信关闭.")
 	}()
+	defer redisCli.Close()
 	defer con.Close()
 
 	// 2.价格信息订阅
@@ -83,6 +100,17 @@ func Watch() {
 	}
 	beego.Info("【火币】价格订阅成功.")
 
+	prices := make(chan map[string]float64)
+	go func() {
+		select {
+		case priceSlice, ok := <-prices:
+			if !ok {
+				return
+			}
+			beego.Info(priceSlice)
+		}
+	}()
+
 	// 3.解析和更新本地价格信息
 	for {
 		jsonData, parseData, err := parseResponse(con)
@@ -100,7 +128,8 @@ func Watch() {
 			beego.Error(err)
 			return
 		}
-		beego.Info(kLine.Ch + ":" + strconv.FormatFloat(kLine.Tick.Close, 'f', 4, 64))
+
+		// prices <- map[string]float64{kLine.Ch: kLine.Tick.Close}
 	}
 }
 
