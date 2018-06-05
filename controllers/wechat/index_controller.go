@@ -89,7 +89,7 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 	// TODO:消息排重
 
 	// 拼接回复信息
-	replay, err := util.ReplayTextMsg(res.Base.FromUserName, "收到的测试信息: "+res.Content)
+	replay, err := util.ReplayTextMsg(res.BaseData.FromUserName, "收到的测试信息: "+res.Content)
 	if err != nil {
 		return ""
 	}

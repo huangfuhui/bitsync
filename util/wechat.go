@@ -47,7 +47,7 @@ type CDATA struct {
 
 // 文本消息
 type TextMsg struct {
-	Base    BaseData
+	BaseData
 	Content string `xml:"Content"`
 	MsgId   string `xml:"MsgId"`
 }
