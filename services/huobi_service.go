@@ -16,7 +16,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-// K线数据结构
+// K线
 type KLine struct {
 	Ch string `json:"ch"`
 	Ts int64  `json:"ts"`
@@ -30,6 +30,14 @@ type KLine struct {
 		High   float64 `json:"high"`
 		Vol    float64 `json:"vol"`
 	}
+}
+
+// 成功订阅
+type SubSuccess struct {
+	Id     string `json:"id"`
+	Status string `json:"status"`
+	Subbed string `json:"subbed"`
+	Ts     int64  `json:"ts"`
 }
 
 var redisCli redis.Conn
@@ -84,32 +92,41 @@ func Watch() {
 		}
 
 		// 获取订阅结果
-		_, data, err := parseResponse(con)
+		subRes, err := onlySubResult(con)
 		if err != nil {
 			beego.Error(err)
 			return
 		}
 
-		status, _ := data.Get("status").String()
-		if status == "ok" {
+		if subRes.Status == "ok" {
+			beego.Debug("【火币】" + subRes.Subbed + "订阅成功.")
 			continue
-		} else if status == "error" {
-			beego.Error("【火币】价格订阅失败.")
+		} else if subRes.Status == "error" {
+			beego.Error("【火币】价格订阅失败,subbed: " + subRes.Subbed)
 			return
 		}
 	}
 	beego.Info("【火币】价格订阅成功.")
 
-	prices := make(chan map[string]float64)
-	go func() {
-		select {
-		case priceSlice, ok := <-prices:
-			if !ok {
-				return
+	prices := make(chan string, 1024)
+	priceValidTime := beego.AppConfig.String("watch::price_valid_time")
+	go func(priceValidTime string) {
+		for {
+			select {
+			case priceSlice := <-prices:
+				priceSli := strings.Split(priceSlice, ":")
+
+				key := "huobi:" + priceSli[0]
+				value := priceSli[1]
+
+				_, err := redisCli.Do("set", key, value, "ex", priceValidTime)
+
+				if err != nil {
+					beego.Error(err)
+				}
 			}
-			beego.Info(priceSlice)
 		}
-	}()
+	}(priceValidTime)
 
 	// 3.解析和更新本地价格信息
 	for {
@@ -129,8 +146,29 @@ func Watch() {
 			return
 		}
 
-		// prices <- map[string]float64{kLine.Ch: kLine.Tick.Close}
+		prices <- kLine.Ch + ":" + strconv.FormatFloat(kLine.Tick.Close, 'f', 4, 64)
 	}
+}
+
+// 仅解析订阅结果
+func onlySubResult(con *websocket.Conn) (SubSuccess, error) {
+	var jsonData []byte
+	var err error
+
+	subSuccess := SubSuccess{}
+	for {
+		jsonData, _, err = parseResponse(con)
+		err = json.Unmarshal(jsonData, &subSuccess)
+		if err != nil {
+			return subSuccess, err
+		}
+
+		if subSuccess.Subbed != "" {
+			break
+		}
+	}
+
+	return subSuccess, nil
 }
 
 // 读取解析websocket响应
