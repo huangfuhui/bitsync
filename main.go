@@ -3,9 +3,10 @@ package main
 import (
 	"github.com/astaxie/beego"
 	_ "bitsync/models"
-	_ "bitsync/routers"
 	"github.com/astaxie/beego/logs"
 	"bitsync/services"
+	_ "bitsync/util"
+	_ "bitsync/routers"
 )
 
 func init() {

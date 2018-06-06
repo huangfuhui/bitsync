@@ -13,7 +13,7 @@ import (
 	"strings"
 	"strconv"
 	"encoding/json"
-	"github.com/gomodule/redigo/redis"
+	"bitsync/util"
 )
 
 // K线
@@ -40,21 +40,6 @@ type SubSuccess struct {
 	Ts     int64  `json:"ts"`
 }
 
-var redisCli redis.Conn
-
-func init() {
-	redisScheme := beego.AppConfig.String("redis_scheme")
-	redisHost := beego.AppConfig.String("redis_host")
-	redisPort := beego.AppConfig.String("redis_port")
-
-	var err error
-	dbNum := redis.DialDatabase(1)
-	redisCli, err = redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
-	if err != nil {
-		beego.Error(err)
-	}
-}
-
 // 与火币建立连接，并监控和解析通信数据
 func Watch() {
 	huobiScheme := beego.AppConfig.String("huobi::ws_scheme")
@@ -76,7 +61,6 @@ func Watch() {
 	defer func() {
 		beego.Info("【火币】websocket通信关闭.")
 	}()
-	defer redisCli.Close()
 	defer con.Close()
 
 	// 2.价格信息订阅
@@ -115,12 +99,12 @@ func Watch() {
 			select {
 			case priceSlice := <-prices:
 				priceSli := strings.Split(priceSlice, ":")
+				subbedSli := strings.Split(priceSli[0], ".")
 
-				key := "huobi:" + priceSli[0]
+				key := "huobi:" + subbedSli[1]
 				value := priceSli[1]
 
-				_, err := redisCli.Do("set", key, value, "ex", priceValidTime)
-
+				err := util.Redis.SetEx(key, value, priceValidTime)
 				if err != nil {
 					beego.Error(err)
 				}
