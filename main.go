@@ -20,7 +20,8 @@ func init() {
 	beego.SetLogger(logs.AdapterFile, `{"filename":"log/bitsync.log","daily":true,"maxdays":7}`)
 
 	// 启动价格监控
-	go services.Watch()
+	go services.WatchHuobi()
+	go services.WatchDragonex()
 }
 
 func main() {

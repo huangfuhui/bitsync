@@ -41,7 +41,7 @@ type SubSuccess struct {
 }
 
 // 与火币建立连接，并监控和解析通信数据
-func Watch() {
+func WatchHuobi() {
 	huobiScheme := beego.AppConfig.String("huobi::ws_scheme")
 	huobiUrl := beego.AppConfig.String("huobi::ws_url")
 	huobiPath := beego.AppConfig.String("huobi::ws_path")
