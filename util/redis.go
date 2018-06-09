@@ -3,6 +3,7 @@ package util
 import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/astaxie/beego"
+	"time"
 )
 
 var Redis RedisCli
@@ -16,12 +17,28 @@ func init() {
 	redisScheme := beego.AppConfig.String("redis_scheme")
 	redisHost := beego.AppConfig.String("redis_host")
 	redisPort := beego.AppConfig.String("redis_port")
+	redisMaxActive, _ := beego.AppConfig.Int("redis_max_active")
+	redisMaxIdle, _ := beego.AppConfig.Int("redis_max_idle")
+	redisIdleTimeout, _ := beego.AppConfig.Int("redis_idle_timeout")
+	redisWait, _ := beego.AppConfig.Bool("redis_wait")
 
 	dbNum := redis.DialDatabase(1)
-	Redis.Cli, err = redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	pool := redis.Pool{
+		MaxIdle:     redisMaxIdle,
+		MaxActive:   redisMaxActive,
+		IdleTimeout: time.Duration(redisIdleTimeout) * time.Second,
+		Wait:        redisWait,
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+		},
+	}
 	if err != nil {
 		beego.Error(err)
+	} else {
+		beego.Info("初始化Redis连接池.")
 	}
+
+	Redis = RedisCli{Cli: pool.Get()}
 }
 
 // 切换数据库

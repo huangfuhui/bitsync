@@ -18,6 +18,10 @@ redis_scheme = "tcp"
 redis_host = "127.0.0.1"
 redis_port = 6379
 redis_password =
+redis_max_active = 10
+redis_max_idle = 3
+redis_idle_timeout = 300
+redis_wait = true
 
 # 微信开发配置
 wechat_account_id = ""
