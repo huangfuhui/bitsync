@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"github.com/bitly/go-simplejson"
 	"strconv"
+	"time"
+	"bitsync/util"
 )
 
 type DragonexService struct {
@@ -19,25 +21,33 @@ var symbols = make(map[string]int64)
 func (service *DragonexService) WatchDragonex() {
 	dragonexUrl := beego.AppConfig.String("dragonex::http_url")
 	dragonexScheme := beego.AppConfig.String("dragonex::http_scheme")
+	priceValidTime := beego.AppConfig.String("watch::price_valid_time")
 
 	service.initSymbol(dragonexUrl, dragonexScheme)
 
 	apiMarketReal := beego.AppConfig.String("dragonex::api_market_real")
 	apiMarketRealSli := strings.Split(apiMarketReal, "@")
 
+	defer beego.Info("【龙交所】价格信息同步关闭.")
+
+	beego.Info("【龙交所】价格信息同步开始.")
 	for {
-		for _, v := range symbols {
+		priceMap := make(map[string]string)
+		for k, v := range symbols {
 			client := &http.Client{}
 			conUrl := url.URL{Scheme: dragonexScheme, Host: dragonexUrl, Path: apiMarketRealSli[1]}
+			conValue := url.Values{}
 
-			req, err := http.NewRequest(strings.ToUpper(apiMarketRealSli[0]), conUrl.String(), nil)
+			// 拼装请求的URL
+			conValue.Add("symbol_id", strconv.FormatInt(v, 10))
+			requestUrl := conUrl.String() + "?" + conValue.Encode()
+
+			req, err := http.NewRequest(strings.ToUpper(apiMarketRealSli[0]), requestUrl, nil)
 
 			if err != nil {
 				beego.Error(err)
 				return
 			}
-
-			req.Form.Add("symbol_id", strconv.FormatInt(v, 10))
 
 			resp, err := client.Do(req)
 			if err != nil {
@@ -46,14 +56,38 @@ func (service *DragonexService) WatchDragonex() {
 				return
 			}
 			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil || http.StatusOK != resp.StatusCode {
-				beego.Info("【龙交所】查询货币信息失败.")
+			if err != nil {
+				beego.Error(err)
+				return
+			} else if http.StatusOK != resp.StatusCode {
+				beego.Error(string(body))
+			}
+
+			// 解析价格
+			jsonData, _ := simplejson.NewJson(body)
+			price, err := jsonData.Get("data").GetIndex(0).Get("close_price").String()
+			if err != nil {
 				beego.Error(err)
 				return
 			}
-
-			beego.Info(string(body))
+			symbolKey := strings.Replace(k, "_", "", -1)
+			priceMap[symbolKey] = price
 		}
+
+		// 更新本地价格信息
+		for symbol, price := range priceMap {
+			key := "drangoex:" + symbol
+			err := util.Redis.SetEx(key, price, priceValidTime)
+			if err != nil {
+				beego.Error(err)
+				return
+			}
+		}
+
+		beego.Info("【龙交所】成功完成一次价格同步.")
+
+		// 间隔2秒钟请求一次价格信息
+		time.Sleep(2 * time.Second)
 	}
 }
 
@@ -85,9 +119,7 @@ func (service *DragonexService) initSymbol(dragonexUrl, dragonexScheme string) {
 		return
 	}
 	beego.Info("【龙交所】成功查询货币信息.")
-	beego.Debug("【龙交所】" + string(body))
 
-	// TODO:更新本地交易对信息
 	symbolData, err := simplejson.NewJson([]byte(body))
 	if err != nil {
 		beego.Error(err)
