@@ -107,14 +107,13 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 	}
 
 	// TODO:消息排重
+	huobiBtc, _ := util.Redis.Get(util.Redis.Con(), "huobi:btcusdt")
+	huobiEth, _ := util.Redis.Get(util.Redis.Con(), "huobi:ethusdt")
+	huobiEos, _ := util.Redis.Get(util.Redis.Con(), "huobi:eosusdt")
 
-	huobiBtc, _ := util.Redis.Get("huobi:btcusdt")
-	huobiEth, _ := util.Redis.Get("huobi:ethusdt")
-	huobiEos, _ := util.Redis.Get("huobi:eosusdt")
-
-	dragonexBtc, _ := util.Redis.Get("dragonex:btcusdt")
-	dragonexEth, _ := util.Redis.Get("dragonex:ethusdt")
-	dragonexEos, _ := util.Redis.Get("dragonex:eosusdt")
+	dragonexBtc, _ := util.Redis.Get(util.Redis.Con(), "dragonex:btcusdt")
+	dragonexEth, _ := util.Redis.Get(util.Redis.Con(), "dragonex:ethusdt")
+	dragonexEos, _ := util.Redis.Get(util.Redis.Con(), "dragonex:eosusdt")
 
 	buffer := bytes.Buffer{}
 	buffer.WriteString("【火币】\nbtc/usdt   " + huobiBtc + "\neth/usdt   " + huobiEth + "\neos/usdt   " + huobiEos + "\n")

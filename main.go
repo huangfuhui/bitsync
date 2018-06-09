@@ -4,9 +4,9 @@ import (
 	"github.com/astaxie/beego"
 	_ "bitsync/models"
 	"github.com/astaxie/beego/logs"
-	"bitsync/services"
 	_ "bitsync/util"
 	_ "bitsync/routers"
+	"bitsync/services"
 )
 
 func init() {

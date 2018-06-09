@@ -77,7 +77,8 @@ func (service *DragonexService) WatchDragonex() {
 		// 更新本地价格信息
 		for symbol, price := range priceMap {
 			key := "dragonex:" + symbol
-			err := util.Redis.SetEx(key, price, priceValidTime)
+			con := util.Redis.Con();
+			err := util.Redis.SetEx(con, key, price, priceValidTime)
 			if err != nil {
 				beego.Error(err)
 				return

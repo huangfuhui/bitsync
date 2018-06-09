@@ -7,10 +7,9 @@ import (
 )
 
 var Redis RedisCli
-var err error
 
 type RedisCli struct {
-	Cli redis.Conn
+	Pool *redis.Pool
 }
 
 func init() {
@@ -23,7 +22,7 @@ func init() {
 	redisWait, _ := beego.AppConfig.Bool("redis_wait")
 
 	dbNum := redis.DialDatabase(1)
-	pool := redis.Pool{
+	pool := &redis.Pool{
 		MaxIdle:     redisMaxIdle,
 		MaxActive:   redisMaxActive,
 		IdleTimeout: time.Duration(redisIdleTimeout) * time.Second,
@@ -32,35 +31,53 @@ func init() {
 			return redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
 		},
 	}
+	beego.Info("初始化Redis连接池.")
+	_, err := pool.Get().Do("ping")
 	if err != nil {
 		beego.Error(err)
-	} else {
-		beego.Info("初始化Redis连接池.")
 	}
 
-	Redis = RedisCli{Cli: pool.Get()}
+	Redis = RedisCli{Pool: pool}
 }
 
 // 切换数据库
-func (r *RedisCli) DB(db int64) error {
-	_, err := r.Cli.Do("select", db)
+func (r *RedisCli) DB(con redis.Conn, db int64) error {
+	_, err := con.Do("select", db)
 	return err
 }
 
 // 获取字符串
-func (r *RedisCli) Get(key string) (string, error) {
-	res, err := redis.String(r.Cli.Do("get", key))
+func (r *RedisCli) Get(con redis.Conn, key string) (string, error) {
+	res, err := redis.String(con.Do("get", key))
+	defer r.Close(con)
 	return res, err
 }
 
 // 设置字符串
-func (r *RedisCli) Set(key, value string) error {
-	_, err := r.Cli.Do("set", key, value)
+func (r *RedisCli) Set(con redis.Conn, key, value string) error {
+	_, err := con.Do("set", key, value)
+	defer r.Close(con)
 	return err
 }
 
 // 设置字符串(含过期时间设置)
-func (r *RedisCli) SetEx(key, value, expire string) error {
-	_, err := r.Cli.Do("set", key, value, "ex", expire)
+func (r *RedisCli) SetEx(con redis.Conn, key, value, expire string) error {
+	_, err := con.Do("set", key, value, "ex", expire)
+	defer r.Close(con)
 	return err
+}
+
+// 获取连接
+func (r *RedisCli) Con() redis.Conn {
+	return r.Pool.Get()
+}
+
+// 释放连接
+func (r *RedisCli) Close(con redis.Conn) error {
+	return con.Close()
+}
+
+// 关闭连接池
+func (r *RedisCli) ClosePool(con redis.Conn) error {
+	return r.Pool.Close()
 }

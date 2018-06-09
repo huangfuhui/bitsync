@@ -107,7 +107,8 @@ func (service *HuobiService) WatchHuobi() {
 				key := "huobi:" + subbedSli[1]
 				value := priceSli[1]
 
-				err := util.Redis.SetEx(key, value, priceValidTime)
+				con := util.Redis.Con();
+				err := util.Redis.SetEx(con, key, value, priceValidTime)
 				if err != nil {
 					beego.Error(err)
 				}
