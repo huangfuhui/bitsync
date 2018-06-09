@@ -4,6 +4,7 @@ import (
 	"bitsync/controllers"
 	"bitsync/util"
 	"github.com/astaxie/beego"
+	"bytes"
 )
 
 type IndexController struct {
@@ -107,13 +108,20 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 
 	// TODO:消息排重
 
-	btc, _ := util.Redis.Get("huobi:btcusdt")
-	eth, _ := util.Redis.Get("huobi:ethusdt")
-	eos, _ := util.Redis.Get("huobi:eosusdt")
-	replayText := "btc/usdt   " + btc + "\neth/usdt   " + eth + "\neos/usdt   " + eos
+	huobiBtc, _ := util.Redis.Get("huobi:btcusdt")
+	huobiEth, _ := util.Redis.Get("huobi:ethusdt")
+	huobiEos, _ := util.Redis.Get("huobi:eosusdt")
+
+	dragonexBtc, _ := util.Redis.Get("dragonex:btcusdt")
+	dragonexEth, _ := util.Redis.Get("dragonex:ethusdt")
+	dragonexEos, _ := util.Redis.Get("dragonex:eosusdt")
+
+	buffer := bytes.Buffer{}
+	buffer.WriteString("【火币】\nbtc/usdt   " + huobiBtc + "\neth/usdt   " + huobiEth + "\neos/usdt   " + huobiEos + "\n")
+	buffer.WriteString("【龙交所】\nbtc/usdt   " + dragonexBtc + "\neth/usdt   " + dragonexEth + "\neos/usdt   " + dragonexEos + "\n")
 
 	// 拼接回复信息
-	replay, err := util.ReplayTextMsg(res.BaseData.FromUserName, replayText)
+	replay, err := util.ReplayTextMsg(res.BaseData.FromUserName, buffer.String())
 	if err != nil {
 		return ""
 	}
