@@ -16,6 +16,9 @@ import (
 	"bitsync/util"
 )
 
+type HuobiService struct {
+}
+
 // K线
 type KLine struct {
 	Ch string `json:"ch"`
@@ -41,7 +44,7 @@ type SubSuccess struct {
 }
 
 // 与火币建立连接，并监控和解析通信数据
-func WatchHuobi() {
+func (service *HuobiService) WatchHuobi() {
 	huobiScheme := beego.AppConfig.String("huobi::ws_scheme")
 	huobiUrl := beego.AppConfig.String("huobi::ws_url")
 	huobiPath := beego.AppConfig.String("huobi::ws_path")
@@ -76,7 +79,7 @@ func WatchHuobi() {
 		}
 
 		// 获取订阅结果
-		subRes, err := onlySubResult(con)
+		subRes, err := service.onlySubResult(con)
 		if err != nil {
 			beego.Error(err)
 			return
@@ -114,7 +117,7 @@ func WatchHuobi() {
 
 	// 3.解析和更新本地价格信息
 	for {
-		jsonData, parseData, err := parseResponse(con)
+		jsonData, parseData, err := service.parseResponse(con)
 		if err != nil {
 			beego.Error(err)
 			return
@@ -135,13 +138,13 @@ func WatchHuobi() {
 }
 
 // 仅解析订阅结果
-func onlySubResult(con *websocket.Conn) (SubSuccess, error) {
+func (service *HuobiService) onlySubResult(con *websocket.Conn) (SubSuccess, error) {
 	var jsonData []byte
 	var err error
 
 	subSuccess := SubSuccess{}
 	for {
-		jsonData, _, err = parseResponse(con)
+		jsonData, _, err = service.parseResponse(con)
 		err = json.Unmarshal(jsonData, &subSuccess)
 		if err != nil {
 			return subSuccess, err
@@ -156,7 +159,7 @@ func onlySubResult(con *websocket.Conn) (SubSuccess, error) {
 }
 
 // 读取解析websocket响应
-func parseResponse(con *websocket.Conn) ([]byte, *simplejson.Json, error) {
+func (service *HuobiService) parseResponse(con *websocket.Conn) ([]byte, *simplejson.Json, error) {
 	// 读取数据
 	_, gzipData, err := con.ReadMessage()
 	if err != nil {
@@ -165,7 +168,7 @@ func parseResponse(con *websocket.Conn) ([]byte, *simplejson.Json, error) {
 	}
 
 	// 解压数据
-	jsonData, err := parseGzip(gzipData)
+	jsonData, err := service.parseGzip(gzipData)
 	if err != nil {
 		beego.Error(err)
 		return jsonData, nil, err
@@ -195,7 +198,7 @@ func parseResponse(con *websocket.Conn) ([]byte, *simplejson.Json, error) {
 }
 
 // 解析Gzip数据
-func parseGzip(data []byte) ([]byte, error) {
+func (service *HuobiService) parseGzip(data []byte) ([]byte, error) {
 	b := new(bytes.Buffer)
 	binary.Write(b, binary.LittleEndian, data)
 

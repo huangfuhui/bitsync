@@ -10,14 +10,17 @@ import (
 	"strconv"
 )
 
+type DragonexService struct {
+}
+
 var symbols = make(map[string]int64)
 
 // 与龙交所建立连接，查询价格信息
-func WatchDragonex() {
+func (service *DragonexService) WatchDragonex() {
 	dragonexUrl := beego.AppConfig.String("dragonex::http_url")
 	dragonexScheme := beego.AppConfig.String("dragonex::http_scheme")
 
-	initSymbol(dragonexUrl, dragonexScheme)
+	service.initSymbol(dragonexUrl, dragonexScheme)
 
 	apiMarketReal := beego.AppConfig.String("dragonex::api_market_real")
 	apiMarketRealSli := strings.Split(apiMarketReal, "@")
@@ -55,7 +58,7 @@ func WatchDragonex() {
 }
 
 // 初始化交易对信息
-func initSymbol(dragonexUrl, dragonexScheme string) {
+func (service *DragonexService) initSymbol(dragonexUrl, dragonexScheme string) {
 	client := &http.Client{}
 
 	// 查询龙交所交易对信息
