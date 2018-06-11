@@ -85,7 +85,7 @@ func (service *DragonexService) WatchDragonex() {
 			}
 		}
 
-		beego.Info("【龙交所】成功完成一次价格同步.")
+		beego.Debug("【龙交所】成功完成一次价格同步.")
 
 		// 间隔2秒钟请求一次价格信息
 		time.Sleep(2 * time.Second)

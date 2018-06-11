@@ -61,9 +61,7 @@ func (service *HuobiService) WatchHuobi() {
 	} else {
 		beego.Info("【火币】websocket通信建立.")
 	}
-	defer func() {
-		beego.Info("【火币】websocket通信关闭.")
-	}()
+	defer beego.Info("【火币】websocket通信关闭.")
 	defer con.Close()
 
 	// 2.价格信息订阅
@@ -185,13 +183,13 @@ func (service *HuobiService) parseResponse(con *websocket.Conn) ([]byte, *simple
 	// 回复心跳检测
 	ping, _ := data.Get("ping").Int64()
 	if ping != 0 {
-		beego.Info("【火币】收到心跳检测: " + string(jsonData))
+		beego.Debug("【火币】收到心跳检测: " + string(jsonData))
 		pong := `{"pong": ` + strconv.FormatInt(ping, 10) + `}`
 		err := con.WriteMessage(websocket.TextMessage, []byte(pong))
 		if err != nil {
-			beego.Info("【火币】回复心跳检测失败," + err.Error())
+			beego.Debug("【火币】回复心跳检测失败," + err.Error())
 		} else {
-			beego.Info("【火币】回复心跳检测成功.")
+			beego.Debug("【火币】回复心跳检测成功.")
 		}
 		return jsonData, nil, nil
 	}
