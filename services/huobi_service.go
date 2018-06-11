@@ -53,49 +53,9 @@ func (service *HuobiService) WatchHuobi() {
 	flag.Parse()
 	conUrl := url.URL{Scheme: huobiScheme, Host: *addr, Path: huobiPath}
 
-	// 1.建立websocket通信
-	con, _, err := websocket.DefaultDialer.Dial(conUrl.String(), nil)
-	if err != nil {
-		beego.Error("【火币】dial: " + err.Error())
-		return
-	} else {
-		beego.Info("【火币】websocket通信建立.")
-	}
-	defer beego.Info("【火币】websocket通信关闭.")
-	defer con.Close()
-
-	// 2.价格信息订阅
-	beego.Info("【火币】开始价格订阅.")
-	pricePairs := beego.AppConfig.String("huobi::price_pairs")
-	priceSlice := strings.Split(pricePairs, ",")
-	for _, v := range priceSlice {
-		// 发起订阅
-		err := con.WriteMessage(websocket.TextMessage, []byte(`{"sub":"market.`+v+`.kline.1min","id":"`+v+`"}`))
-		if err != nil {
-			beego.Error(err.Error())
-			return
-		}
-
-		// 获取订阅结果
-		subRes, err := service.onlySubResult(con)
-		if err != nil {
-			beego.Error(err)
-			return
-		}
-
-		if subRes.Status == "ok" {
-			beego.Debug("【火币】" + subRes.Subbed + "订阅成功.")
-			continue
-		} else if subRes.Status == "error" {
-			beego.Error("【火币】价格订阅失败,subbed: " + subRes.Subbed)
-			return
-		}
-	}
-	beego.Info("【火币】价格订阅成功.")
-
 	prices := make(chan string, 1024)
-	priceValidTime := beego.AppConfig.String("watch::price_valid_time")
-	go func(priceValidTime string) {
+	go func() {
+		priceValidTime := beego.AppConfig.String("watch::price_valid_time")
 		for {
 			select {
 			case priceSlice := <-prices:
@@ -112,27 +72,69 @@ func (service *HuobiService) WatchHuobi() {
 				}
 			}
 		}
-	}(priceValidTime)
+	}()
 
-	// 3.解析和更新本地价格信息
 	for {
-		jsonData, parseData, err := service.parseResponse(con)
+		// 1.建立websocket通信
+		con, _, err := websocket.DefaultDialer.Dial(conUrl.String(), nil)
 		if err != nil {
-			beego.Error(err)
+			beego.Error("【火币】dial: " + err.Error())
 			return
-		} else if parseData == nil {
-			continue
+		} else {
+			beego.Info("【火币】websocket通信建立.")
 		}
 
-		// 解析价格信息
-		kLine := KLine{}
-		err = json.Unmarshal(jsonData, &kLine)
-		if err != nil {
-			beego.Error(err)
-			return
-		}
+		// 2.价格信息订阅
+		beego.Info("【火币】开始价格订阅.")
+		pricePairs := beego.AppConfig.String("huobi::price_pairs")
+		priceSlice := strings.Split(pricePairs, ",")
+		for _, v := range priceSlice {
+			// 发起订阅
+			err := con.WriteMessage(websocket.TextMessage, []byte(`{"sub":"market.`+v+`.kline.1min","id":"`+v+`"}`))
+			if err != nil {
+				beego.Error(err.Error())
+				beego.Info("【火币】websocket通信关闭.")
+				con.Close()
+				return
+			}
 
-		prices <- kLine.Ch + ":" + strconv.FormatFloat(kLine.Tick.Close, 'f', 4, 64)
+			// 获取订阅结果
+			subRes, err := service.onlySubResult(con)
+			if err != nil {
+				beego.Error(err)
+				beego.Info("【火币】websocket通信关闭.")
+				con.Close()
+				return
+			}
+
+			if subRes.Status == "ok" {
+				beego.Debug("【火币】" + subRes.Subbed + "订阅成功.")
+			} else if subRes.Status == "error" {
+				beego.Error("【火币】价格订阅失败,subbed: " + subRes.Subbed)
+			}
+		}
+		beego.Info("【火币】价格订阅成功.")
+
+		// 3.解析和更新本地价格信息
+		for {
+			jsonData, parseData, err := service.parseResponse(con)
+			if err != nil {
+				beego.Error(err)
+				break
+			} else if parseData == nil {
+				continue
+			}
+
+			// 解析价格信息
+			kLine := KLine{}
+			err = json.Unmarshal(jsonData, &kLine)
+			if err != nil {
+				beego.Error(err)
+				break
+			}
+
+			prices <- kLine.Ch + ":" + strconv.FormatFloat(kLine.Tick.Close, 'f', 4, 64)
+		}
 	}
 }
 
