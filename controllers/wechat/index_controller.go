@@ -120,7 +120,7 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 	dragonexSymbolSli := strings.Split(dragonexSymbol, parisSeparator)
 
 	buffer := bytes.Buffer{}
-	buffer.WriteString("【火币】\nbtc/usdt   " + huobiBtc + "$\neth/usdt   " + huobiEth + "$:\neos/usdt   " + huobiEos + "$\n")
+	buffer.WriteString("【火币】\nbtc/usdt " + huobiBtc + "$\neth/usdt " + huobiEth + "$\neos/usdt " + huobiEos + "$\n")
 	buffer.WriteString("【龙交所】\n")
 
 	for _, v := range dragonexSymbolSli {
@@ -130,7 +130,7 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 
 		numericPrice, _ := strconv.ParseFloat(price, 64)
 		cny := strconv.FormatFloat(numericPrice*6.5, 'f', 4, 64)
-		buffer.WriteString(symbol + "    " + price + "$ (≈" + cny + "￥)\n")
+		buffer.WriteString(symbol + " " + price + "$ (≈" + cny + "￥)\n")
 	}
 
 	// 拼接回复信息
