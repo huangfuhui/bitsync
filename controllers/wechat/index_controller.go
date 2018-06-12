@@ -120,7 +120,7 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 	dragonexSymbolSli := strings.Split(dragonexSymbol, parisSeparator)
 
 	buffer := bytes.Buffer{}
-	buffer.WriteString("【火币】\nbtc/usdt   " + huobiBtc + "\neth/usdt   " + huobiEth + "\neos/usdt   " + huobiEos + "\n")
+	buffer.WriteString("【火币】\nbtc/usdt   " + huobiBtc + "$\neth/usdt   " + huobiEth + "$:\neos/usdt   " + huobiEos + "$\n")
 	buffer.WriteString("【龙交所】\n")
 
 	for _, v := range dragonexSymbolSli {
