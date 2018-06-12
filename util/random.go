@@ -1,6 +1,9 @@
 package util
 
-import "math/rand"
+import (
+	"math/rand"
+	"time"
+)
 
 type Random struct {
 }
@@ -11,5 +14,5 @@ func (r *Random) Rand(min, max int64) int64 {
 		return 0
 	}
 
-	return rand.Int63n(max-min) + min
+	return rand.New(rand.NewSource(time.Now().UnixNano())).Int63n(max-min) + min
 }
