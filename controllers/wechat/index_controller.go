@@ -5,6 +5,8 @@ import (
 	"bitsync/util"
 	"github.com/astaxie/beego"
 	"bytes"
+	"strings"
+	"strconv"
 )
 
 type IndexController struct {
@@ -87,7 +89,7 @@ func (c *IndexController) event(xmlBody []byte) string {
 	// TODO:消息排重
 
 	// 拼接回复信息
-	replay, err := util.ReplayTextMsg(res.BaseData.FromUserName, "终于等到你，还好我没放弃~~~")
+	replay, err := util.ReplayTextMsg(res.BaseData.FromUserName, "终于等到你，还好我没放弃~~~\n回复任意消息可查看币价^_^")
 	if err != nil {
 		return ""
 	}
@@ -106,18 +108,30 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 		return ""
 	}
 
+	symbolSeparator := beego.AppConfig.String("watch::symbol_separator")
+	parisSeparator := beego.AppConfig.String("watch::paris_separator")
+
 	// TODO:消息排重
 	huobiBtc, _ := util.Redis.Get(util.Redis.Con(), "huobi:btcusdt")
 	huobiEth, _ := util.Redis.Get(util.Redis.Con(), "huobi:ethusdt")
 	huobiEos, _ := util.Redis.Get(util.Redis.Con(), "huobi:eosusdt")
 
-	dragonexBtc, _ := util.Redis.Get(util.Redis.Con(), "dragonex:btcusdt")
-	dragonexEth, _ := util.Redis.Get(util.Redis.Con(), "dragonex:ethusdt")
-	dragonexEos, _ := util.Redis.Get(util.Redis.Con(), "dragonex:eosusdt")
+	dragonexSymbol := beego.AppConfig.String("dragonex::price_pairs");
+	dragonexSymbolSli := strings.Split(dragonexSymbol, parisSeparator)
 
 	buffer := bytes.Buffer{}
 	buffer.WriteString("【火币】\nbtc/usdt   " + huobiBtc + "\neth/usdt   " + huobiEth + "\neos/usdt   " + huobiEos + "\n")
-	buffer.WriteString("【龙交所】\nbtc/usdt   " + dragonexBtc + "\neth/usdt   " + dragonexEth + "\neos/usdt   " + dragonexEos + "\n")
+	buffer.WriteString("【龙交所】\n")
+
+	for _, v := range dragonexSymbolSli {
+		priceKey := strings.Replace(v, symbolSeparator, "", -1)
+		symbol := strings.Replace(v, symbolSeparator, "/", -1)
+		price, _ := util.Redis.Get(util.Redis.Con(), "dragonex:"+priceKey)
+
+		numericPrice, _ := strconv.ParseFloat(price, 64)
+		cny := strconv.FormatFloat(numericPrice*6.5, 'f', 4, 64)
+		buffer.WriteString(symbol + "    " + price + "$ (≈" + cny + "￥)\n")
+	}
 
 	// 拼接回复信息
 	replay, err := util.ReplayTextMsg(res.BaseData.FromUserName, buffer.String())
