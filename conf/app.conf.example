@@ -32,3 +32,5 @@ wechat_encoding_aes_key = ""
 
 # 引入价格监控配置
 include "watch/watch.conf"
+# 引入短信配置
+include "sms.conf"
