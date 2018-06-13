@@ -120,7 +120,9 @@ func (service *HuobiService) WatchHuobi() {
 			jsonData, parseData, err := service.parseResponse(con)
 			if err != nil {
 				beego.Error(err)
-				break
+				beego.Info("【火币】websocket通信关闭.")
+				con.Close()
+				continue
 			} else if parseData == nil {
 				continue
 			}
@@ -130,7 +132,7 @@ func (service *HuobiService) WatchHuobi() {
 			err = json.Unmarshal(jsonData, &kLine)
 			if err != nil {
 				beego.Error(err)
-				break
+				continue
 			}
 
 			prices <- kLine.Ch + ":" + strconv.FormatFloat(kLine.Tick.Close, 'f', 4, 64)
