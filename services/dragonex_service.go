@@ -64,10 +64,12 @@ func (service *DragonexService) WatchDragonex() {
 			}
 
 			// 解析价格
+			symbolKey := strings.Replace(k, "_", "", -1)
 			jsonData, _ := simplejson.NewJson(body)
-			priceMap, _ := jsonData.Get("data").GetIndex(0).Map()
-			if len(priceMap) == 0 {
+			priceResMap, _ := jsonData.Get("data").GetIndex(0).Map()
+			if len(priceResMap) == 0 {
 				beego.Debug("【龙交所】价格解析失败,symbol:" + k)
+				priceMap[symbolKey] = "0"
 				continue
 			}
 			price, err := jsonData.Get("data").GetIndex(0).Get("close_price").String()
@@ -75,7 +77,6 @@ func (service *DragonexService) WatchDragonex() {
 				beego.Error(err)
 				return
 			}
-			symbolKey := strings.Replace(k, "_", "", -1)
 			priceMap[symbolKey] = price
 		}
 
