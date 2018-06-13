@@ -48,6 +48,7 @@ func (service *SmsService) SendSingle(nationCode string, mobile string, params [
 	appSign := beego.AppConfig.String("sms::app_sign")
 	appId := beego.AppConfig.String("sms::app_id")
 	appKey := beego.AppConfig.String("sms::app_key")
+	apiHost := beego.AppConfig.String("sms::api_host")
 	apiUrlConf := beego.AppConfig.String("sms::api_send_single")
 	tplId, _ := beego.AppConfig.Int64("sms::tpl_price_warn")
 
@@ -57,10 +58,11 @@ func (service *SmsService) SendSingle(nationCode string, mobile string, params [
 
 	// 拼接URL
 	apiUrlSli := strings.Split(apiUrlConf, "@")
-	schemeHost := strings.Split(apiUrlSli[1], "://")
+	schemePath := strings.Split(apiUrlSli[1], ":")
 	apiUrl := url.URL{
-		Scheme: schemeHost[0],
-		Host:   schemeHost[1],
+		Scheme: schemePath[0],
+		Host:   apiHost,
+		Path:   schemePath[1],
 	}
 	param := apiUrl.Query()
 	param.Add("sdkappid", appId)
@@ -123,13 +125,9 @@ func (service *SmsService) SendSingle(nationCode string, mobile string, params [
 
 // 计算签名
 func (service *SmsService) sig(appKey, random, times, mobile string) string {
-	value := url.Values{}
-	value.Add("appkey", appKey)
-	value.Add("random", random)
-	value.Add("time", times)
-	value.Add("mobile", mobile)
+	params := "appkey=" + appKey + "&random=" + random + "&time=" + times + "&mobile=" + mobile
 
 	sh := sha256.New()
-	sh.Write([]byte(value.Encode()))
+	sh.Write([]byte(params))
 	return fmt.Sprintf("%x", sh.Sum(nil))
 }
