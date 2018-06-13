@@ -68,7 +68,7 @@ func (service *DragonexService) WatchDragonex() {
 			price, err := jsonData.Get("data").GetIndex(0).Get("close_price").String()
 			if err != nil {
 				beego.Error(err)
-				return
+				continue
 			}
 			symbolKey := strings.Replace(k, "_", "", -1)
 			priceMap[symbolKey] = price
