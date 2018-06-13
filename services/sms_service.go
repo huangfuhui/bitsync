@@ -51,7 +51,8 @@ func (service *SmsService) SendSingle(nationCode string, mobile string, params [
 	apiUrlConf := beego.AppConfig.String("sms::api_send_single")
 	tplId, _ := beego.AppConfig.Int64("sms::tpl_price_warn")
 
-	random := util.Random{}.Rand(1000, 9999)
+	randomGen := util.Random{}
+	random := randomGen.Rand(1000, 9999)
 	times := time.Now().Unix()
 
 	// 拼接URL
