@@ -25,6 +25,9 @@ func init() {
 	// 启动价格监控
 	go huobi.WatchHuobi()
 	go dragonex.WatchDragonex()
+
+	warn := services.PriceWarnService{}
+	go warn.Warn()
 }
 
 func main() {
