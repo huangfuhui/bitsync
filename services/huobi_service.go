@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"encoding/json"
 	"bitsync/util"
+	"time"
 )
 
 type HuobiService struct {
@@ -79,7 +80,7 @@ func (service *HuobiService) WatchHuobi() {
 		con, _, err := websocket.DefaultDialer.Dial(conUrl.String(), nil)
 		if err != nil {
 			beego.Error("【火币】dial: " + err.Error())
-			return
+			continue
 		} else {
 			beego.Info("【火币】websocket通信建立.")
 		}
@@ -137,6 +138,8 @@ func (service *HuobiService) WatchHuobi() {
 
 			prices <- kLine.Ch + ":" + strconv.FormatFloat(kLine.Tick.Close, 'f', 4, 64)
 		}
+		beego.Info("【火币】5秒后尝试重连websocket.")
+		time.Sleep(5 * time.Second)
 	}
 }
 
