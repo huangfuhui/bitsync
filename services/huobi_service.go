@@ -123,7 +123,7 @@ func (service *HuobiService) WatchHuobi() {
 				beego.Error(err)
 				beego.Info("【火币】websocket通信关闭.")
 				con.Close()
-				continue
+				break
 			} else if parseData == nil {
 				continue
 			}
