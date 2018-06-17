@@ -12,15 +12,17 @@ type RedisCli struct {
 	Pool *redis.Pool
 }
 
-func init() {
-	redisScheme := beego.AppConfig.String("redis_scheme")
-	redisHost := beego.AppConfig.String("redis_host")
-	redisPort := beego.AppConfig.String("redis_port")
-	redisMaxActive, _ := beego.AppConfig.Int("redis_max_active")
-	redisMaxIdle, _ := beego.AppConfig.Int("redis_max_idle")
-	redisIdleTimeout, _ := beego.AppConfig.Int("redis_idle_timeout")
-	redisWait, _ := beego.AppConfig.Bool("redis_wait")
+var (
+	redisScheme         = beego.AppConfig.String("redis_scheme")
+	redisHost           = beego.AppConfig.String("redis_host")
+	redisPort           = beego.AppConfig.String("redis_port")
+	redisMaxActive, _   = beego.AppConfig.Int("redis_max_active")
+	redisMaxIdle, _     = beego.AppConfig.Int("redis_max_idle")
+	redisIdleTimeout, _ = beego.AppConfig.Int("redis_idle_timeout")
+	redisWait, _        = beego.AppConfig.Bool("redis_wait")
+)
 
+func init() {
 	dbNum := redis.DialDatabase(1)
 	pool := &redis.Pool{
 		MaxIdle:     redisMaxIdle,
@@ -41,7 +43,7 @@ func init() {
 }
 
 // 切换数据库
-func (r *RedisCli) DB(con redis.Conn, db int64) error {
+func (r *RedisCli) DB(con redis.Conn, db int) error {
 	_, err := con.Do("select", db)
 	return err
 }
@@ -80,4 +82,25 @@ func (r *RedisCli) Close(con redis.Conn) error {
 // 关闭连接池
 func (r *RedisCli) ClosePool(con redis.Conn) error {
 	return r.Pool.Close()
+}
+
+type Cli struct {
+	DB int
+	Ex int
+}
+
+func (cli *Cli) Get(key string) (string, error) {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	res, err := redis.String(con.Do("get", key))
+	defer con.Close()
+	return res, err
+}
+
+func (cli *Cli) Set(key, value string) error {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	_, err := con.Do("set", key, value)
+	defer con.Close()
+	return err
 }
