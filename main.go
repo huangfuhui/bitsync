@@ -7,6 +7,7 @@ import (
 	_ "bitsync/util"
 	_ "bitsync/routers"
 	"bitsync/services"
+	"bitsync/task"
 )
 
 func init() {
@@ -26,8 +27,9 @@ func init() {
 	go huobi.WatchHuobi()
 	go dragonex.WatchDragonex()
 
-	warn := services.PriceWarnService{}
-	go warn.Warn()
+	// 任务调度
+	t := task.BaseTask{}
+	t.Execute()
 }
 
 func main() {

@@ -104,3 +104,7 @@ func (cli *Cli) Set(key, value string) error {
 	defer con.Close()
 	return err
 }
+
+func (cli *Cli) Select(db int) {
+	cli.DB = db
+}
