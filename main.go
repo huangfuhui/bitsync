@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	_ "bitsync/util"
 	_ "bitsync/routers"
+	"bitsync/controllers"
 	"bitsync/services"
 	"bitsync/task"
 )
@@ -33,6 +34,8 @@ func init() {
 }
 
 func main() {
+	beego.ErrorController(&controllers.ErrorController{})
+
 	beego.Info("初始化完成,启动应用...")
 	beego.Run()
 }
