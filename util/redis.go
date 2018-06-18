@@ -105,6 +105,14 @@ func (cli *Cli) Set(key, value string) error {
 	return err
 }
 
+func (cli *Cli) SetEx(key, value string) error {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	_, err := con.Do("set", key, value, "ex", cli.Ex)
+	defer con.Close()
+	return err
+}
+
 func (cli *Cli) Select(db int) {
 	cli.DB = db
 }
