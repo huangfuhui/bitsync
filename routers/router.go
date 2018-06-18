@@ -5,7 +5,6 @@ import (
 	"bitsync/controllers/wechat"
 	"bitsync/controllers/sms"
 	"github.com/astaxie/beego/context"
-	"bitsync/middleware"
 )
 
 func init() {
@@ -27,10 +26,7 @@ func init() {
 
 	indexNs := beego.NewNamespace("/index",
 		beego.NSCond(func(ctx *context.Context) bool {
-			base := middleware.Base{Context: ctx}
-			return base.Auth(
-				middleware.Auth{},
-			)
+			return true
 		}),
 
 	)
