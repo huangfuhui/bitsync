@@ -41,7 +41,7 @@ func (model *AccountModel) Verify(UID int, account, password string) bool {
 	acc := new(member.Account)
 	acc.UID = UID
 
-	err := orm.NewOrm().Read(&acc, "ULD")
+	err := orm.NewOrm().Read(&acc, "UID")
 	if err == nil && acc.Account == account && acc.Password == password {
 		return true
 	}
