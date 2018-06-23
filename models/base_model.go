@@ -10,6 +10,12 @@ type BaseModel struct {
 }
 
 func init() {
+	runMode := beego.AppConfig.String("runmode")
+
+	if runMode != "prod" {
+		orm.Debug = true
+	}
+
 	mysqlUser := beego.AppConfig.String("mysql_user")
 	mysqlPassword := beego.AppConfig.String("mysql_password")
 	mysqlHost := beego.AppConfig.String("mysql_host")

@@ -3,7 +3,7 @@ package object
 import "time"
 
 type Base struct {
-	Id        int
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Id        int       `orm:"pk;auto"`
+	CreatedAt time.Time `orm:"auto_now_add;type(timestamp)"`
+	UpdatedAt time.Time `orm:"auto_now;type(timestamp)"`
 }
