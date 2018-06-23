@@ -3,12 +3,14 @@ create database if not exists bitsync default CHARSET utf8 collate utf8_general_
 
 create table account (
   id int(10) unsigned not null auto_increment,
-  uid int(10) unsigned not null comment '用户UID',
+  uid int(10) unsigned unique not null comment '用户UID',
   account varchar(20) not null comment '账号',
   password varchar(256) not null comment '密码',
   wechat_openid varchar(50) not null comment '微信openid',
   status tinyint(3) unsigned default '1' not null comment '账号状态(1:可用 2:停用)',
   regester_time timestamp null comment '注册时间',
+  login_time timestamp null comment '本次登录时间',
+  login_ip varchar(15) null comment '本次登录IP',
   last_login_time timestamp null comment '上一次登录时间',
   last_login_ip varchar(15) null comment '上一次登录IP',
   created_at timestamp null default null,
