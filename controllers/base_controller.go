@@ -22,6 +22,7 @@ func (c *BaseController) Output(data interface{}) {
 	responseData.Response = data
 	responseData.Msg = ""
 
+	c.Ctx.Output.Status = http.StatusOK
 	c.Data["json"] = &responseData
 	c.ServeJSON()
 }
@@ -29,10 +30,11 @@ func (c *BaseController) Output(data interface{}) {
 // 自定义响应输出JSON数据
 func (c *BaseController) OutPutDefined(code int, data interface{}, msg string) {
 	responseData := new(response)
-	responseData.Code = http.StatusOK
+	responseData.Code = code
 	responseData.Response = data
 	responseData.Msg = msg
 
+	c.Ctx.Output.Status = code
 	c.Data["json"] = &responseData
 	c.ServeJSON()
 }

@@ -2,6 +2,7 @@ package validator
 
 import (
 	"github.com/astaxie/beego/validation"
+	"github.com/astaxie/beego"
 	"bitsync/controllers"
 )
 
@@ -9,13 +10,20 @@ type BaseValidator struct {
 }
 
 // 验证数据
-func (v *BaseValidator) Validate(c *controllers.BaseController, o *interface{}) {
+func (v *BaseValidator) Validate(c *controllers.BaseController, o interface{}) {
 	valid := validation.Validation{}
-	ok, _ := valid.Valid(&o)
+	ok, err := valid.Valid(o)
+
+	if err != nil {
+		beego.Error(err)
+		c.OutPutDefined(500, "", "未知错误")
+	}
 
 	if !ok {
-		err := valid.Errors[0]
-		msg := err.Key + " -> " + err.Message
-		c.OutPutDefined(401, []string{}, msg)
+		for _, err := range valid.Errors {
+			msg := err.Key + " -> " + err.Message
+			c.OutPutDefined(400, "", msg)
+			break
+		}
 	}
 }
