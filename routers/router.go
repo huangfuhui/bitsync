@@ -5,6 +5,7 @@ import (
 	"bitsync/controllers/wechat"
 	"bitsync/controllers/sms"
 	"github.com/astaxie/beego/context"
+	"bitsync/controllers/account"
 )
 
 func init() {
@@ -24,12 +25,14 @@ func init() {
 		beego.NSRouter("/index", &sms.IndexController{}, "get:Index"),
 	)
 
-	indexNs := beego.NewNamespace("/index",
+	// 账号管理
+	accountNs := beego.NewNamespace("/account",
 		beego.NSCond(func(ctx *context.Context) bool {
 			return true
 		}),
 
+		beego.NSRouter("/register", &account.AccountController{}, "get:Register"),
 	)
 
-	beego.AddNamespace(wechatNs, smsNs, indexNs)
+	beego.AddNamespace(wechatNs, smsNs, accountNs)
 }
