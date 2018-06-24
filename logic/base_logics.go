@@ -1,9 +1,13 @@
 package logic
 
-import "bitsync/controllers"
+import (
+	"bitsync/controllers"
+	"bitsync/error"
+)
 
 type BaseLogic struct {
 	controllers.BaseController
+	error.ApiError
 }
 
 // 获取参数
