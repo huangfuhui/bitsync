@@ -6,6 +6,7 @@ type AccountLogic struct {
 	logic.BaseLogic
 }
 
-func (l *AccountLogic) Register() {
+// 注册
+func (l *AccountLogic) Register(handset, password, pin string) {
 
 }
