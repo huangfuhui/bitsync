@@ -105,6 +105,38 @@ func (cli *Cli) Set(key, value string) error {
 	return err
 }
 
+func (cli *Cli) Lpush(list, value string) error {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	_, err := con.Do("lpush", list, value)
+	defer con.Close()
+	return err
+}
+
+func (cli *Cli) Ltrim(list, start, end string) error {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	_, err := con.Do("ltrim", start, end)
+	defer con.Close()
+	return err
+}
+
+func (cli *Cli) Llen(list string) (int, error) {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	llen, err := redis.Int(con.Do("llen", list))
+	defer con.Close()
+	return llen, err
+}
+
+func (cli *Cli) Lindex(list, index string) (string, error) {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	str, err := redis.String(con.Do("lindex", list, index))
+	defer con.Close()
+	return str, err
+}
+
 func (cli *Cli) SetEx(key, value string) error {
 	dbNum := redis.DialDatabase(cli.DB)
 	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
