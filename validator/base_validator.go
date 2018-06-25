@@ -21,7 +21,7 @@ func (v *BaseValidator) Validate(c *controllers.BaseController, o interface{}) {
 
 	if !ok {
 		for _, err := range valid.Errors {
-			msg := err.Key + " -> " + err.Message
+			msg := err.Key + " " + err.Message
 			c.OutputDefined(400, "", msg)
 			break
 		}
