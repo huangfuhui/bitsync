@@ -44,13 +44,12 @@ type SingleTplRes struct {
 }
 
 // 单发短信
-func (service *SmsService) SendSingle(nationCode string, mobile string, params []string) error {
+func (service *SmsService) SendSingle(nationCode string, mobile string, params []string, tplId int64) error {
 	appSign := beego.AppConfig.String("sms::app_sign")
 	appId := beego.AppConfig.String("sms::app_id")
 	appKey := beego.AppConfig.String("sms::app_key")
 	apiHost := beego.AppConfig.String("sms::api_host")
 	apiUrlConf := beego.AppConfig.String("sms::api_send_single")
-	tplId, _ := beego.AppConfig.Int64("sms::tpl_price_warn")
 
 	randomGen := util.Random{}
 	random := randomGen.Rand(1000, 9999)

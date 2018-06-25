@@ -14,6 +14,7 @@ type WarnTask struct {
 
 func (task *WarnTask) Warn() {
 	redis := util.Cli{}
+	tplId, _ := beego.AppConfig.Int64("sms::tpl_price_warn")
 	for {
 		time.Sleep(time.Second)
 
@@ -43,7 +44,7 @@ func (task *WarnTask) Warn() {
 
 			for _, v := range phones {
 				sms := services.SmsService{}
-				err := sms.SendSingle("86", v, []string{"eos/usdt", updatePrice})
+				err := sms.SendSingle("86", v, []string{"eos/usdt", updatePrice}, tplId)
 				if err != nil {
 					beego.Error(err)
 				}
@@ -55,7 +56,7 @@ func (task *WarnTask) Warn() {
 
 			for _, v := range phones {
 				sms := services.SmsService{}
-				err := sms.SendSingle("86", v, []string{"eos/usdt", updatePrice})
+				err := sms.SendSingle("86", v, []string{"eos/usdt", updatePrice}, tplId)
 				if err != nil {
 					beego.Error(err)
 				}
