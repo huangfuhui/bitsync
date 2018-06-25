@@ -16,13 +16,13 @@ func (v *BaseValidator) Validate(c *controllers.BaseController, o interface{}) {
 
 	if err != nil {
 		beego.Error(err)
-		c.OutPutDefined(500, "", "未知错误")
+		c.OutputDefined(500, "", "未知错误")
 	}
 
 	if !ok {
 		for _, err := range valid.Errors {
 			msg := err.Key + " -> " + err.Message
-			c.OutPutDefined(400, "", msg)
+			c.OutputDefined(400, "", msg)
 			break
 		}
 	}

@@ -28,7 +28,7 @@ func (c *BaseController) Output(data interface{}) {
 }
 
 // 自定义响应输出JSON数据
-func (c *BaseController) OutPutDefined(code int, data interface{}, msg string) {
+func (c *BaseController) OutputDefined(code int, data interface{}, msg string) {
 	responseData := new(response)
 	responseData.Code = code
 	responseData.Response = data
