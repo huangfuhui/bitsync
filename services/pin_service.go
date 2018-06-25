@@ -14,7 +14,10 @@ const BUSINESS_CODE_PIN = "1001" // 登录验证码
 var (
 	ERR_EMPTY_BUSINESS_CODE = errors.New("业务码不能为空")
 	ERR_EMPTY_HANDSET       = errors.New("手机号码不能为空")
+	ERR_EMPTY_PIN           = errors.New("验证码不能为空")
 	ERR_LIMIT_REQUEST       = errors.New("请求频率过高")
+	ERR_PIN_INVALID         = errors.New("验证码失效")
+	ERR_PIN_NOT_MATCH       = errors.New("验证码不匹配")
 )
 
 type PinService struct {
@@ -32,7 +35,7 @@ func (service *PinService) Send(businessCode, handset string) (string, error) {
 	redis := util.Cli{}
 	redis.Select(db)
 
-	key := "pin:" + businessCode + ":" + handset
+	key := "sms:pin:" + businessCode + ":" + handset
 	listLength, _ := redis.Llen(key)
 	lastRequest, _ := redis.Lindex(key, "0")
 
@@ -61,14 +64,14 @@ func (service *PinService) Send(businessCode, handset string) (string, error) {
 	}
 
 	// 发送验证码
-	sms := SmsService{}
+	// sms := SmsService{}
 	random := util.Random{}
 	pin := strconv.FormatInt(random.Rand(1000, 9999), 10)
-	tplId, _ := beego.AppConfig.Int64("tpl_verify_code")
-	err := sms.SendSingle("86", handset, []string{pin}, tplId)
-	if err != nil {
-		return "", err
-	}
+	// tplId, _ := beego.AppConfig.Int64("tpl_verify_code")
+	// err := sms.SendSingle("86", handset, []string{pin}, tplId)
+	// if err != nil {
+	// 	return "", err
+	// }
 
 	// 记录请求信息
 	value := strconv.FormatInt(now, 10) + "|" + pin
@@ -80,6 +83,34 @@ func (service *PinService) Send(businessCode, handset string) (string, error) {
 	return pin, nil
 }
 
-func (service *PinService) Validate() {
+// 检查验证码的合法性
+func (service *PinService) Validate(businessCode, handset, pin string) (bool, error) {
+	if businessCode == "" {
+		return false, ERR_EMPTY_BUSINESS_CODE
+	} else if handset == "" {
+		return false, ERR_EMPTY_HANDSET
+	} else if pin == "" {
+		return false, ERR_EMPTY_PIN
+	}
 
+	db, _ := beego.AppConfig.Int("redis_db_pin")
+	redis := util.Cli{}
+	redis.Select(db)
+
+	key := "sms:pin:" + businessCode + ":" + handset
+
+	if exists, err := redis.Exists(key); err != nil || !exists {
+		return false, ERR_PIN_INVALID
+	}
+
+	value, _ := redis.Lindex(key, "0")
+	valueSli := strings.Split(value, "|")
+	pinTime, _ := strconv.ParseInt(valueSli[0], 10, 64)
+	if pinTime < time.Now().Unix()-600 {
+		return false, ERR_PIN_INVALID
+	} else if valueSli[1] != pin {
+		return false, ERR_PIN_NOT_MATCH
+	}
+
+	return true, nil
 }
