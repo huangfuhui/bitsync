@@ -145,6 +145,14 @@ func (cli *Cli) SetEx(key, value string) error {
 	return err
 }
 
+func (cli *Cli) Exists(key string) (bool, error) {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	exists, err := redis.Bool(con.Do("exists", key))
+	defer con.Close()
+	return exists, err
+}
+
 func (cli *Cli) Select(db int) {
 	cli.DB = db
 }
