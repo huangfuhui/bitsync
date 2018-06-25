@@ -64,14 +64,14 @@ func (service *PinService) Send(businessCode, handset string) (string, error) {
 	}
 
 	// 发送验证码
-	// sms := SmsService{}
+	sms := SmsService{}
 	random := util.Random{}
 	pin := strconv.FormatInt(random.Rand(1000, 9999), 10)
-	// tplId, _ := beego.AppConfig.Int64("tpl_verify_code")
-	// err := sms.SendSingle("86", handset, []string{pin}, tplId)
-	// if err != nil {
-	// 	return "", err
-	// }
+	tplId, _ := beego.AppConfig.Int64("tpl_verify_code")
+	err := sms.SendSingle("86", handset, []string{pin}, tplId)
+	if err != nil {
+		return "", err
+	}
 
 	// 记录请求信息
 	value := strconv.FormatInt(now, 10) + "|" + pin
