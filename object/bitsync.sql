@@ -8,7 +8,7 @@ create table account (
   password varchar(256) not null comment '密码',
   wechat_openid varchar(50) not null comment '微信openid',
   status tinyint(3) unsigned default '1' not null comment '账号状态(1:可用 2:停用)',
-  regester_time timestamp null comment '注册时间',
+  register_time timestamp null comment '注册时间',
   login_time timestamp null comment '本次登录时间',
   login_ip varchar(15) null comment '本次登录IP',
   last_login_time timestamp null comment '上一次登录时间',
