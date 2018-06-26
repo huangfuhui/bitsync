@@ -38,3 +38,15 @@ func (c *BaseController) OutputDefined(code int, data interface{}, msg string) {
 	c.Data["json"] = &responseData
 	c.ServeJSON()
 }
+
+// 业务错误提醒
+func (c *BaseController) Warn(msg string) {
+	responseData := new(response)
+	responseData.Code = -1
+	responseData.Response = ""
+	responseData.Msg = msg
+
+	c.Ctx.Output.Status = http.StatusOK
+	c.Data["json"] = &responseData
+	c.ServeJSON()
+}
