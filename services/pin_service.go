@@ -9,7 +9,11 @@ import (
 	"time"
 )
 
-const BUSINESS_CODE_PIN = "1001" // 登录验证码
+const (
+	PIN_REGISTER       = "1000" // 注册验证码
+	PIN_LOGIN          = "1001" // 登录验证码
+	PIN_RESET_PASSWORD = "1002" // 重置密码验证码
+)
 
 var (
 	ERR_EMPTY_BUSINESS_CODE = errors.New("业务码不能为空")
