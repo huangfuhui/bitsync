@@ -39,7 +39,19 @@ func (c *BaseController) OutputDefined(code int, data interface{}, msg string) {
 	c.ServeJSON()
 }
 
-// 业务错误提醒
+// 请求参数错误
+func (c *BaseController) BadRequest(msg string) {
+	responseData := new(response)
+	responseData.Code = http.StatusBadRequest
+	responseData.Response = ""
+	responseData.Msg = msg
+
+	c.Ctx.Output.Status = http.StatusBadRequest
+	c.Data["json"] = &responseData
+	c.ServeJSON()
+}
+
+// 业务错误
 func (c *BaseController) Warn(msg string) {
 	responseData := new(response)
 	responseData.Code = -1
