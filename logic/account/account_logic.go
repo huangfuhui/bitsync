@@ -17,6 +17,13 @@ type AccountLogic struct {
 
 // 注册
 func (l *AccountLogic) Register(handset, password, pin string) (UID int) {
+	account := member.AccountModel{}
+	exists := account.Exists(handset)
+	if exists > 0 {
+		l.Warn("账号已经存在")
+		return
+	}
+
 	// 校验密码强度
 	match := false
 	match, _ = regexp.MatchString("^.{8,15}$", password)
@@ -49,7 +56,6 @@ func (l *AccountLogic) Register(handset, password, pin string) (UID int) {
 	io.WriteString(w, salt+password)
 	password = fmt.Sprintf("%x", w.Sum(nil))
 
-	account := member.AccountModel{}
 	UID, err = account.NewAccount(handset, password, "")
 	if err != nil {
 		beego.Error(err)

@@ -5,6 +5,7 @@ import (
 	"bitsync/validator"
 	"bitsync/validator/account"
 	accountLogic "bitsync/logic/account"
+	"bitsync/logic"
 )
 
 type AccountController struct {
@@ -24,8 +25,8 @@ func (c *AccountController) Register() {
 		pin,
 	})
 
-	logic := accountLogic.AccountLogic{}
-	logic.Register(handset, password, pin)
+	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l.Register(handset, password, pin)
 
 	c.Output("")
 }
