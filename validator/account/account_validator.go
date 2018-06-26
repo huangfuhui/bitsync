@@ -5,3 +5,7 @@ type Register struct {
 	Password string `valid:"Required"`
 	Pin      string `valid:"Required;Numeric;Length(4)"`
 }
+
+type RegisterPIN struct {
+	Handset  string `valid:"Required;Mobile"`
+}

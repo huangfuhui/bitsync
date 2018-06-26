@@ -65,3 +65,13 @@ func (l *AccountLogic) Register(handset, password, pin string) (UID int) {
 
 	return
 }
+
+// 发送注册验证码
+func (l *AccountLogic) RegisterPin(handset string) {
+	sms := services.PinService{}
+	_, err := sms.Send(services.PIN_REGISTER, handset)
+	if err != nil {
+		l.Warn(err.Error())
+		return
+	}
+}

@@ -32,6 +32,7 @@ func init() {
 		}),
 
 		beego.NSRouter("/register", &account.AccountController{}, "post:Register"),
+		beego.NSRouter("/registerPin", &account.AccountController{}, "post:RegisterPin"),
 	)
 
 	beego.AddNamespace(wechatNs, smsNs, accountNs)

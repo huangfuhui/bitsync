@@ -22,6 +22,7 @@ var (
 	ERR_LIMIT_REQUEST       = errors.New("请求频率过高")
 	ERR_PIN_INVALID         = errors.New("验证码失效")
 	ERR_PIN_NOT_MATCH       = errors.New("验证码不匹配")
+	ERR_PIN_NETWORK_ERROR   = errors.New("网络错误")
 )
 
 type PinService struct {
@@ -74,7 +75,8 @@ func (service *PinService) Send(businessCode, handset string) (string, error) {
 	tplId, _ := beego.AppConfig.Int64("tpl_verify_code")
 	err := sms.SendSingle("86", handset, []string{pin}, tplId)
 	if err != nil {
-		return "", err
+		beego.Error(err)
+		return "", ERR_PIN_NETWORK_ERROR
 	}
 
 	// 记录请求信息

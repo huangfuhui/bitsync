@@ -30,3 +30,18 @@ func (c *AccountController) Register() {
 
 	c.Output("")
 }
+
+// 发送注册验证码
+func (c *AccountController) RegisterPin() {
+	handset := c.GetString("handset")
+
+	v := validator.BaseValidator{}
+	v.Validate(&c.BaseController, account.RegisterPIN{
+		handset,
+	})
+
+	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l.RegisterPin(handset)
+
+	c.Output("")
+}
