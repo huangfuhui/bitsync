@@ -51,6 +51,18 @@ func (c *BaseController) BadRequest(msg string) {
 	c.ServeJSON()
 }
 
+// 服务器错误
+func (c *BaseController) ServerError() {
+	responseData := new(response)
+	responseData.Code = http.StatusInternalServerError
+	responseData.Response = ""
+	responseData.Msg = "服务器错误"
+
+	c.Ctx.Output.Status = http.StatusInternalServerError
+	c.Data["json"] = &responseData
+	c.ServeJSON()
+}
+
 // 业务错误
 func (c *BaseController) Warn(msg string) {
 	responseData := new(response)

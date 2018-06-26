@@ -42,7 +42,7 @@ func (v *BaseValidator) Validate(c *controllers.BaseController, o interface{}) {
 
 	if err != nil {
 		beego.Error(err)
-		c.OutputDefined(500, "", "未知错误")
+		c.ServerError()
 	}
 
 	if !ok {
