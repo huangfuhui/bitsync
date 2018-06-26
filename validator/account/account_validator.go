@@ -1,7 +1,7 @@
 package account
 
 type Register struct {
-	HandSet  string `valid:"Required;Mobile"`
+	Handset  string `valid:"Required;Mobile"`
 	Password string `valid:"Required"`
 	Pin      string `valid:"Required;Numeric;Length(4)"`
 }
