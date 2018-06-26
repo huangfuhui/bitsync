@@ -24,10 +24,10 @@ func (model *AccountModel) NewAccount(account, password, wechatOpeonid string) (
 	newAccount.Account = account
 	newAccount.Password = password
 	newAccount.Status = member.STATUS_YES
-	newAccount.WechatOpeonid = wechatOpeonid
+	newAccount.WechatOpenid = wechatOpeonid
 	newAccount.RegisterTime = time.Now()
 
-	_, err = o.Insert(&newAccount)
+	_, err = o.Insert(newAccount)
 	if err != nil {
 		o.Rollback()
 
