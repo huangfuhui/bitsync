@@ -75,3 +75,23 @@ func (l *AccountLogic) RegisterPin(handset string) {
 		return
 	}
 }
+
+// 登录
+func (l *AccountLogic) Login(handset, password string) (res map[string]string) {
+	salt := beego.AppConfig.String("secretkey")
+	w := md5.New()
+	io.WriteString(w, salt+password)
+	password = fmt.Sprintf("%x", w.Sum(nil))
+
+	// 验证账号密码
+	account := member.AccountModel{}
+	exists := account.Verify(handset, password)
+	if !exists {
+		l.BadRequest("账号或密码不正确")
+		return
+	}
+
+	// TODO:生成token
+
+	return map[string]string{"token": "token123"}
+}

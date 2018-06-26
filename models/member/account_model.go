@@ -65,12 +65,13 @@ where id = ?
 }
 
 // 验证账号密码
-func (m *AccountModel) Verify(UID int, account, password string) bool {
-	acc := new(member.Account)
-	acc.UID = UID
+func (m *AccountModel) Verify(account, password string) bool {
+	a := new(member.Account)
+	a.Account = account
+	a.Password = password
 
-	err := orm.NewOrm().Read(acc, "UID")
-	if err == nil && acc.Account == account && acc.Password == password {
+	err := orm.NewOrm().Read(a, "Account", "Password")
+	if err == nil && a.UID > 0 {
 		return true
 	}
 

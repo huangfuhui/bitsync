@@ -19,11 +19,14 @@ func (c *AccountController) Register() {
 	pin := c.GetString("pin")
 
 	v := validator.BaseValidator{}
-	v.Validate(&c.BaseController, account.Register{
+	ok := v.Validate(&c.BaseController, account.Register{
 		handset,
 		password,
 		pin,
 	})
+	if !ok {
+		return
+	}
 
 	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	l.Register(handset, password, pin)
@@ -36,12 +39,35 @@ func (c *AccountController) RegisterPin() {
 	handset := c.GetString("handset")
 
 	v := validator.BaseValidator{}
-	v.Validate(&c.BaseController, account.RegisterPIN{
+	ok := v.Validate(&c.BaseController, account.RegisterPIN{
 		handset,
 	})
+	if !ok {
+		return
+	}
 
 	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	l.RegisterPin(handset)
 
 	c.Output("")
+}
+
+// 登录
+func (c *AccountController) Login() {
+	handset := c.GetString("handset")
+	password := c.GetString("password")
+
+	v := validator.BaseValidator{}
+	ok := v.Validate(&c.BaseController, account.Login{
+		handset,
+		password,
+	})
+	if !ok {
+		return
+	}
+
+	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
+	res := l.Login(handset, password)
+
+	c.Output(res)
 }

@@ -36,13 +36,14 @@ func init() {
 }
 
 // 验证数据
-func (v *BaseValidator) Validate(c *controllers.BaseController, o interface{}) {
+func (v *BaseValidator) Validate(c *controllers.BaseController, o interface{}) bool {
 	valid := validation.Validation{}
 	ok, err := valid.Valid(o)
 
 	if err != nil {
 		beego.Error(err)
 		c.ServerError()
+		return false
 	}
 
 	if !ok {
@@ -51,5 +52,8 @@ func (v *BaseValidator) Validate(c *controllers.BaseController, o interface{}) {
 			c.OutputDefined(400, "", msg)
 			break
 		}
+		return false
 	}
+
+	return true
 }
