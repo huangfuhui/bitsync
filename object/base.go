@@ -1,6 +1,8 @@
 package object
 
-import "time"
+import (
+	"time"
+)
 
 type Base struct {
 	Id        int       `orm:"pk;auto"`

@@ -4,6 +4,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"bitsync/object/member"
 )
 
 type BaseModel struct {
@@ -24,5 +25,14 @@ func init() {
 
 	dataSource := mysqlUser + ":" + mysqlPassword + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/" + mysqlDb + "?charset=utf8"
 	// 注册数据库
-	orm.RegisterDataBase("defalut", "mysql", dataSource)
+	err := orm.RegisterDataBase("default", "mysql", dataSource)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	// 注册模型
+	orm.RegisterModel(
+		new(member.Account),
+		new(member.Member),
+	)
 }

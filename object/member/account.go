@@ -10,10 +10,10 @@ const STATUS_NO = 2  // 停用
 
 type Account struct {
 	object.Base
-	UID           int
+	UID           int `orm:"column(UID)"`
 	Account       string
 	Password      string
-	WechatOpeonid string
+	WechatOpenid string
 	Status        int
 	RegisterTime  time.Time
 	LoginTime     time.Time
