@@ -12,16 +12,44 @@ type AccountModel struct {
 }
 
 // 新增账号
-func (model *AccountModel) NewAccount(UID int, account, password, wechatOpeonid string) (int64, error) {
+func (model *AccountModel) NewAccount(account, password, wechatOpeonid string) (UID int, err error) {
+	o := orm.NewOrm()
+	err = o.Begin()
+
+	if err != nil {
+		return 0, err
+	}
+
 	newAccount := new(member.Account)
-	newAccount.UID = UID
 	newAccount.Account = account
 	newAccount.Password = password
 	newAccount.Status = member.STATUS_YES
 	newAccount.WechatOpeonid = wechatOpeonid
 	newAccount.RegisterTime = time.Now()
 
-	return orm.NewOrm().Insert(&newAccount)
+	_, err = o.Insert(&newAccount)
+	if err != nil {
+		o.Rollback()
+
+		return 0, err
+	}
+
+	query := `
+update account 
+set UID = 10000 + id
+where id = ?
+and account = ?
+`
+	_, err = o.Raw(query, newAccount.Id, account).Exec()
+	if err != nil {
+		o.Rollback()
+
+		return 0, err
+	}
+
+	o.Commit()
+
+	return newAccount.UID, nil
 }
 
 // 更新登录信息
