@@ -10,6 +10,7 @@ import (
 	"io"
 	"fmt"
 	"bitsync/util"
+	"strconv"
 )
 
 type AccountLogic struct {
@@ -92,17 +93,21 @@ func (l *AccountLogic) Login(handset, password string) (res map[string]string) {
 		return
 	}
 
+	random := util.Random{}
+	randomNum := random.Rand(100000, 999999)
+
 	// 生成token
 	tokenMd5 := md5.New()
-	io.WriteString(tokenMd5, salt+handset+password)
+	io.WriteString(tokenMd5, salt+handset+strconv.FormatInt(randomNum, 10))
 	token := fmt.Sprintf("%x", tokenMd5.Sum(nil))
 
 	// 保存token
+	db, _ := beego.AppConfig.Int("redis_db_token")
 	redis := util.Cli{}
-	redis.Select(0)
+	redis.Select(db)
 	key := "token:" + handset
 	redis.Set(key, token)
 	redis.SetEx(key, "3600")
 
-	return map[string]string{"token": "token123"}
+	return map[string]string{"token": token}
 }
