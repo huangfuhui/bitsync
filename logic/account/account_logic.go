@@ -9,6 +9,7 @@ import (
 	"crypto/md5"
 	"io"
 	"fmt"
+	"bitsync/util"
 )
 
 type AccountLogic struct {
@@ -91,7 +92,17 @@ func (l *AccountLogic) Login(handset, password string) (res map[string]string) {
 		return
 	}
 
-	// TODO:生成token
+	// 生成token
+	tokenMd5 := md5.New()
+	io.WriteString(tokenMd5, salt+handset+password)
+	token := fmt.Sprintf("%x", tokenMd5.Sum(nil))
+
+	// 保存token
+	redis := util.Cli{}
+	redis.Select(0)
+	key := "token:" + handset
+	redis.Set(key, token)
+	redis.SetEx(key, "3600")
 
 	return map[string]string{"token": "token123"}
 }
