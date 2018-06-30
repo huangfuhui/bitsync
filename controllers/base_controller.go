@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"strings"
 	"strconv"
+	"bitsync/util"
 )
 
 type response struct {
@@ -40,6 +41,18 @@ func (c *BaseController) GetUID() (UID int) {
 			return 0
 		}
 
+		db, _ := beego.AppConfig.Int("redis_db_token")
+		redis := util.Cli{}
+		redis.Select(db)
+		localToken, err := redis.Get("token:" + decodeToken[1])
+		if err != nil {
+			beego.Error(err)
+
+			return 0
+		} else if localToken != token {
+			return 0
+		}
+
 		return int(uid)
 	}
 
@@ -61,6 +74,18 @@ func (c *BaseController) GetAccount() (handset string) {
 		return ""
 	} else {
 		decodeToken := strings.Split(string(res), ":")
+
+		db, _ := beego.AppConfig.Int("redis_db_token")
+		redis := util.Cli{}
+		redis.Select(db)
+		localToken, err := redis.Get("token:" + decodeToken[1])
+		if err != nil {
+			beego.Error(err)
+
+			return ""
+		} else if localToken != token {
+			return ""
+		}
 
 		return decodeToken[1]
 	}
