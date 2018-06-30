@@ -3,6 +3,9 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"net/http"
+	"encoding/base64"
+	"strings"
+	"strconv"
 )
 
 type response struct {
@@ -13,6 +16,47 @@ type response struct {
 
 type BaseController struct {
 	beego.Controller
+}
+
+// 获取当前登录用户的UID
+func (c *BaseController) GetUID() (UID int) {
+	token := c.Ctx.Request.Header.Get("token")
+
+	// 解密token
+	secretKey := beego.AppConfig.String("secretkey")
+	decode := base64.NewEncoding(secretKey)
+	res, err := decode.DecodeString(token)
+	if err != nil {
+		beego.Error(err)
+		return 0
+	} else {
+		decodeToken := strings.Split(string(res), ":")
+		uid, err := strconv.ParseInt(decodeToken[0], 0, 10)
+		if err == nil {
+			return int(uid)
+		}
+	}
+
+	return 0
+}
+
+// 获取当前登录用户的账号
+func (c *BaseController) GetAccount() (handset string) {
+	token := c.Ctx.Request.Header.Get("token")
+
+	// 解密token
+	secretKey := beego.AppConfig.String("secretkey")
+	decode := base64.NewEncoding(secretKey)
+	res, err := decode.DecodeString(token)
+	if err != nil {
+		beego.Error(err)
+		return ""
+	} else {
+		decodeToken := strings.Split(string(res), ":")
+		return decodeToken[1]
+	}
+
+	return ""
 }
 
 // 正常响应输出JSON数据
