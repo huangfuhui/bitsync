@@ -12,15 +12,15 @@ type MemberModel struct {
 }
 
 // 新建会员
-func (model *MemberModel) NewMember(accountId int, name, handset, email string, sex int, avatarUrl string, BirthDay time.Time) (member.Member, error) {
+func (model *MemberModel) NewMember(uid int, name, handset, email string, sex int, avatarUrl string, BirthDay time.Time) (member.Member, error) {
 	newMember := member.Member{
-		AccountId: accountId,
+		UID:       uid,
 		Name:      name,
-		HandSet:   handset,
+		Handset:   handset,
 		Email:     email,
 		Sex:       sex,
 		AvatarUrl: avatarUrl,
-		BirthDay:  BirthDay,
+		Birthday:  BirthDay,
 	}
 
 	id, err := orm.NewOrm().Insert(&newMember)

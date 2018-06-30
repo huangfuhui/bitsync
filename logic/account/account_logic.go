@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"bitsync/util"
 	"strconv"
+	"time"
+	"strings"
 )
 
 type AccountLogic struct {
@@ -58,11 +60,19 @@ func (l *AccountLogic) Register(handset, password, pin string) (UID int) {
 	io.WriteString(w, salt+password)
 	password = fmt.Sprintf("%x", w.Sum(nil))
 
+	// 注册
 	UID, err = account.NewAccount(handset, password, "")
 	if err != nil {
 		beego.Error(err)
 		l.ServerError()
 		return
+	}
+
+	// 更新登录信息
+	remoteAddr := strings.Split(l.Ctx.Request.RemoteAddr, ":")
+	err = account.Login(UID, time.Now().Format("2006-01-02 15:04:05"), remoteAddr[0])
+	if err != nil {
+		beego.Error(err)
 	}
 
 	return

@@ -5,13 +5,18 @@ import (
 	"time"
 )
 
+const (
+	MEMBER_SEX_MALE   = 1
+	MEMBER_SEX_FEMALE = 0
+)
+
 type Member struct {
 	object.Base
-	AccountId int
+	UID       int `orm:"column(UID)"`
 	Name      string
-	HandSet   string
+	Handset   string
 	Email     string
 	Sex       int
 	AvatarUrl string
-	BirthDay  time.Time
+	Birthday  time.Time
 }

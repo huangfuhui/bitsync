@@ -21,7 +21,7 @@ create table account (
 
 create table member (
   id int(10) unsigned not null auto_increment,
-  account_id int(10) unsigned not null comment '账户ID',
+  uid int(10) unsigned not null comment '用户UID',
   name varchar(20) not null comment '昵称',
   handset varchar(20) not null comment '手机号码',
   email varchar(50) not null comment '邮箱',

@@ -17,7 +17,7 @@ type Account struct {
 	Status        int
 	RegisterTime  time.Time
 	LoginTime     time.Time
-	LoginIp       time.Time
+	LoginIp       string
 	LastLoginTime time.Time
-	LastLoginIp   time.Time
+	LastLoginIp   string
 }

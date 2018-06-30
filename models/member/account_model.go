@@ -5,6 +5,8 @@ import (
 	"bitsync/object/member"
 	"time"
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego"
+	"strconv"
 )
 
 type AccountModel struct {
@@ -17,6 +19,8 @@ func (m *AccountModel) NewAccount(account, password, wechatOpeonid string) (UID 
 	err = o.Begin()
 
 	if err != nil {
+		beego.Error(err)
+
 		return 0, err
 	}
 
@@ -30,19 +34,42 @@ func (m *AccountModel) NewAccount(account, password, wechatOpeonid string) (UID 
 	_, err = o.Insert(newAccount)
 	if err != nil {
 		o.Rollback()
+		beego.Error(err)
 
 		return 0, err
 	}
 
+	newAccount.UID = 10000 + newAccount.Id
+
 	query := `
 update account 
-set UID = 10000 + id
+set UID = ?
 where id = ?
 and account = ?
 `
-	_, err = o.Raw(query, newAccount.Id, account).Exec()
+	_, err = o.Raw(query, newAccount.UID, newAccount.Id, account).Exec()
 	if err != nil {
 		o.Rollback()
+		beego.Error(err)
+
+		return 0, err
+	}
+
+	name := "bs" + strconv.FormatInt(int64(newAccount.UID), 10)
+	newMember := member.Member{
+		UID:       newAccount.UID,
+		Name:      name,
+		Handset:   account,
+		Email:     "",
+		Sex:       member.MEMBER_SEX_MALE,
+		AvatarUrl: "",
+		Birthday:  time.Now(),
+	}
+
+	_, err = o.Insert(&newMember)
+	if err != nil {
+		o.Rollback()
+		beego.Error(err)
 
 		return 0, err
 	}
@@ -53,13 +80,13 @@ and account = ?
 }
 
 // 更新登录信息
-func (m *AccountModel) Login(id int, loginTime, loginIp string) error {
+func (m *AccountModel) Login(UID int, loginTime, loginIp string) error {
 	query := `
 update account 
 set last_login_time = login_time, last_login_ip = login_ip, login_time = ?, login_ip = ?
-where id = ?
+where uid = ?
 `
-	_, err := orm.NewOrm().Raw(query, loginTime, loginIp, id).Exec()
+	_, err := orm.NewOrm().Raw(query, loginTime, loginIp, UID).Exec()
 
 	return err
 }
