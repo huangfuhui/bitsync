@@ -126,3 +126,17 @@ func (m *AccountModel) ModifyPassword(UID int, oldPwd, newPwd string) error {
 
 	return err
 }
+
+// 重置密码
+func (m *AccountModel) ResetPassword(handset, newPwd string) error {
+	a := new(member.Account)
+	a.Account = handset
+
+	err := orm.NewOrm().Read(a, "Account")
+	if err == nil {
+		a.Password = newPwd
+		_, err = orm.NewOrm().Update(a, "Password")
+	}
+
+	return err
+}

@@ -19,3 +19,8 @@ type ModifyPassword struct {
 	OldPwd string `valid:"Required"`
 	NewPwd string `valid:"Required"`
 }
+
+type ResetPassword struct {
+	Handset string `valid:"Required;Mobile"`
+	Pin     string `valid:"Required;Numeric;Length(4)"`
+}

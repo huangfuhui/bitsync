@@ -204,6 +204,33 @@ func (l *AccountLogic) PasswordPin(handset string) {
 }
 
 // 重置密码
-func (l *AccountLogic) ResetPassword(handset, pin string) {
+func (l *AccountLogic) ResetPassword(handset, pin string) (string, error) {
+	// 校验验证码
+	sms := services.PinService{}
+	_, err := sms.Validate(services.PIN_RESET_PASSWORD, handset, pin)
+	if err != nil {
+		l.Warn(err.Error())
+		return "", err
+	}
 
+	random := util.Random{}
+	randomNum := random.Rand(100000, 999999)
+
+	// 密码加密
+	salt := beego.AppConfig.String("salt")
+	w := md5.New()
+	io.WriteString(w, salt+"bs"+strconv.FormatInt(randomNum, 10))
+	newPwd := fmt.Sprintf("%x", w.Sum(nil))
+
+	// 修改密码
+	account := member.AccountModel{}
+	err = account.ResetPassword(handset, newPwd)
+	if err != nil {
+		beego.Error(err)
+
+		l.Warn("重置密码失败")
+		return "", err
+	}
+
+	return "bs" + strconv.FormatInt(randomNum, 10), nil
 }

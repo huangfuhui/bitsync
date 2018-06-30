@@ -91,3 +91,41 @@ func (c *AccountController) ModifyPassword() {
 
 	c.Output("")
 }
+
+// 发送重置密码操作验证码
+func (c *AccountController) PasswordPin() {
+	handset := c.GetString("handset")
+
+	v := validator.BaseValidator{}
+	ok := v.Validate(&c.BaseController, account.RegisterPIN{
+		handset,
+	})
+	if !ok {
+		return
+	}
+
+	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l.PasswordPin(handset)
+
+	c.Output("")
+}
+
+// 重置密码
+func (c *AccountController) ResetPassword() {
+	handset := c.GetString("handset")
+	pin := c.GetString("pin")
+
+	v := validator.BaseValidator{}
+	ok := v.Validate(&c.BaseController, account.ResetPassword{
+		handset,
+		pin,
+	})
+	if !ok {
+		return
+	}
+
+	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
+	newPwd, _ := l.ResetPassword(handset, pin)
+
+	c.Output(map[string]string{"new_password": newPwd})
+}
