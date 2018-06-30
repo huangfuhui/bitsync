@@ -71,3 +71,23 @@ func (c *AccountController) Login() {
 
 	c.Output(res)
 }
+
+// 修改密码
+func (c *AccountController) ModifyPassword() {
+	oldPwd := c.GetString("oldPwd")
+	newPwd := c.GetString("newPwd")
+
+	v := validator.BaseValidator{}
+	ok := v.Validate(&c.BaseController, account.ModifyPassword{
+		oldPwd,
+		newPwd,
+	})
+	if !ok {
+		return
+	}
+
+	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l.ModifyPassword(oldPwd, newPwd)
+
+	c.Output("")
+}

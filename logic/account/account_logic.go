@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"time"
 	"strings"
+	"encoding/base64"
 )
 
 type AccountLogic struct {
@@ -55,7 +56,7 @@ func (l *AccountLogic) Register(handset, password, pin string) (res map[string]s
 	}
 
 	// 密码加密
-	salt := beego.AppConfig.String("secretkey")
+	salt := beego.AppConfig.String("salt")
 	w := md5.New()
 	io.WriteString(w, salt+password)
 	password = fmt.Sprintf("%x", w.Sum(nil))
@@ -80,9 +81,8 @@ func (l *AccountLogic) Register(handset, password, pin string) (res map[string]s
 	randomNum := random.Rand(100000, 999999)
 
 	// 生成token
-	tokenMd5 := md5.New()
-	io.WriteString(tokenMd5, salt+handset+strconv.FormatInt(randomNum, 10))
-	token := fmt.Sprintf("%x", tokenMd5.Sum(nil))
+	tokenKey := strconv.FormatInt(int64(UID), 10) + ":" + handset + ":" + strconv.FormatInt(randomNum, 10)
+	token := base64.StdEncoding.EncodeToString([]byte(tokenKey))
 
 	// 保存token
 	db, _ := beego.AppConfig.Int("redis_db_token")
@@ -107,15 +107,15 @@ func (l *AccountLogic) RegisterPin(handset string) {
 
 // 登录
 func (l *AccountLogic) Login(handset, password string) (res map[string]string) {
-	salt := beego.AppConfig.String("secretkey")
+	salt := beego.AppConfig.String("salt")
 	w := md5.New()
 	io.WriteString(w, salt+password)
 	password = fmt.Sprintf("%x", w.Sum(nil))
 
 	// 验证账号密码
 	account := member.AccountModel{}
-	exists := account.Verify(handset, password)
-	if !exists {
+	UID := account.Verify(handset, password)
+	if UID == 0 {
 		l.BadRequest("账号或密码不正确")
 		return
 	}
@@ -124,9 +124,8 @@ func (l *AccountLogic) Login(handset, password string) (res map[string]string) {
 	randomNum := random.Rand(100000, 999999)
 
 	// 生成token
-	tokenMd5 := md5.New()
-	io.WriteString(tokenMd5, salt+handset+strconv.FormatInt(randomNum, 10))
-	token := fmt.Sprintf("%x", tokenMd5.Sum(nil))
+	tokenKey := strconv.FormatInt(int64(UID), 10) + ":" + handset + ":" + strconv.FormatInt(randomNum, 10)
+	token := base64.StdEncoding.EncodeToString([]byte(tokenKey))
 
 	// 保存token
 	db, _ := beego.AppConfig.Int("redis_db_token")
@@ -137,4 +136,74 @@ func (l *AccountLogic) Login(handset, password string) (res map[string]string) {
 	redis.SetEx(key, "3600")
 
 	return map[string]string{"token": token}
+}
+
+// 修改密码
+func (l *AccountLogic) ModifyPassword(oldPwd, newPwd string) {
+	UID := l.GetUID()
+	handset := l.GetAccount()
+	if UID == 0 || handset == "" {
+		l.Warn("修改密码失败")
+
+		return
+	}
+
+	salt := beego.AppConfig.String("salt")
+	w := md5.New()
+	io.WriteString(w, salt+oldPwd)
+	oldPwd = fmt.Sprintf("%x", w.Sum(nil))
+
+	// 验证账号旧密码
+	account := member.AccountModel{}
+	exists := account.Verify(handset, oldPwd)
+	if exists == 0 {
+		l.BadRequest("旧密码不正确")
+		return
+	}
+
+	// 校验新密码强度
+	match := false
+	match, _ = regexp.MatchString("^.{8,15}$", newPwd)
+	if !match {
+		l.BadRequest("密码长度必须是8-15个字符")
+		return
+	}
+	match, _ = regexp.MatchString("^.*[a-zA-Z].*$", newPwd)
+	if !match {
+		l.BadRequest("密码至少包含一个字母")
+		return
+	}
+	match, _ = regexp.MatchString("^.*[0-9].*$", newPwd)
+	if !match {
+		l.BadRequest("密码至少包含一个数字")
+		return
+	}
+
+	// 新密码加密
+	w = md5.New()
+	io.WriteString(w, salt+newPwd)
+	newPwd = fmt.Sprintf("%x", w.Sum(nil))
+
+	// 修改密码
+	err := account.ModifyPassword(UID, oldPwd, newPwd)
+	if err != nil {
+		beego.Error(err)
+
+		l.Warn("修改密码失败")
+	}
+}
+
+// 发送重置密码验证码
+func (l *AccountLogic) PasswordPin(handset string) {
+	sms := services.PinService{}
+	_, err := sms.Send(services.PIN_RESET_PASSWORD, handset)
+	if err != nil {
+		l.Warn(err.Error())
+		return
+	}
+}
+
+// 重置密码
+func (l *AccountLogic) ResetPassword(handset, pin string) {
+
 }

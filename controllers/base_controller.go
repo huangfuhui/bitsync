@@ -21,20 +21,26 @@ type BaseController struct {
 // 获取当前登录用户的UID
 func (c *BaseController) GetUID() (UID int) {
 	token := c.Ctx.Request.Header.Get("token")
+	if token == "" {
+		return 0
+	}
 
 	// 解密token
-	secretKey := beego.AppConfig.String("secretkey")
-	decode := base64.NewEncoding(secretKey)
-	res, err := decode.DecodeString(token)
+	res, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
 		beego.Error(err)
+
 		return 0
 	} else {
 		decodeToken := strings.Split(string(res), ":")
-		uid, err := strconv.ParseInt(decodeToken[0], 0, 10)
-		if err == nil {
-			return int(uid)
+		uid, err := strconv.ParseInt(decodeToken[0], 10, 0)
+		if err != nil {
+			beego.Error(err)
+
+			return 0
 		}
+
+		return int(uid)
 	}
 
 	return 0
@@ -43,16 +49,19 @@ func (c *BaseController) GetUID() (UID int) {
 // 获取当前登录用户的账号
 func (c *BaseController) GetAccount() (handset string) {
 	token := c.Ctx.Request.Header.Get("token")
+	if token == "" {
+		return ""
+	}
 
 	// 解密token
-	secretKey := beego.AppConfig.String("secretkey")
-	decode := base64.NewEncoding(secretKey)
-	res, err := decode.DecodeString(token)
+	res, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
 		beego.Error(err)
+
 		return ""
 	} else {
 		decodeToken := strings.Split(string(res), ":")
+
 		return decodeToken[1]
 	}
 

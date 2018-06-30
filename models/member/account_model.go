@@ -5,7 +5,6 @@ import (
 	"bitsync/object/member"
 	"time"
 	"github.com/astaxie/beego/orm"
-	"github.com/astaxie/beego"
 	"strconv"
 )
 
@@ -19,8 +18,6 @@ func (m *AccountModel) NewAccount(account, password, wechatOpeonid string) (UID 
 	err = o.Begin()
 
 	if err != nil {
-		beego.Error(err)
-
 		return 0, err
 	}
 
@@ -34,7 +31,6 @@ func (m *AccountModel) NewAccount(account, password, wechatOpeonid string) (UID 
 	_, err = o.Insert(newAccount)
 	if err != nil {
 		o.Rollback()
-		beego.Error(err)
 
 		return 0, err
 	}
@@ -50,7 +46,6 @@ and account = ?
 	_, err = o.Raw(query, newAccount.UID, newAccount.Id, account).Exec()
 	if err != nil {
 		o.Rollback()
-		beego.Error(err)
 
 		return 0, err
 	}
@@ -69,7 +64,6 @@ and account = ?
 	_, err = o.Insert(&newMember)
 	if err != nil {
 		o.Rollback()
-		beego.Error(err)
 
 		return 0, err
 	}
@@ -92,17 +86,17 @@ where uid = ?
 }
 
 // 验证账号密码
-func (m *AccountModel) Verify(account, password string) bool {
+func (m *AccountModel) Verify(account, password string) (UID int) {
 	a := new(member.Account)
 	a.Account = account
 	a.Password = password
 
 	err := orm.NewOrm().Read(a, "Account", "Password")
 	if err == nil && a.UID > 0 {
-		return true
+		return a.UID
 	}
 
-	return false
+	return 0
 }
 
 // 判断账号是否存在
@@ -116,4 +110,19 @@ func (m *AccountModel) Exists(account string) (UID int) {
 	}
 
 	return 0
+}
+
+// 修改密码
+func (m *AccountModel) ModifyPassword(UID int, oldPwd, newPwd string) error {
+	a := new(member.Account)
+	a.UID = UID
+	a.Password = oldPwd
+
+	err := orm.NewOrm().Read(a, "UID", "Password")
+	if err == nil {
+		a.Password = newPwd
+		_, err = orm.NewOrm().Update(a, "Password")
+	}
+
+	return err
 }

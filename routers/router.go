@@ -44,6 +44,7 @@ func init() {
 		beego.NSRouter("/register", &account.AccountController{}, "post:Register"),
 		beego.NSRouter("/registerPin", &account.AccountController{}, "post:RegisterPin"),
 		beego.NSRouter("/login", &account.AccountController{}, "post:Login"),
+		beego.NSRouter("/modifyPassword", &account.AccountController{}, "post:ModifyPassword"),
 
 	)
 

@@ -5,6 +5,9 @@ httpport = 8080
 autorender = false
 copyrequestbody = true
 runmode = "dev"
+
+# 加密解密
+salt = ""
 secretkey = ""
 
 # MySQL数据库
