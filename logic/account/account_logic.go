@@ -20,7 +20,7 @@ type AccountLogic struct {
 }
 
 // 注册
-func (l *AccountLogic) Register(handset, password, pin string) (UID int) {
+func (l *AccountLogic) Register(handset, password, pin string) (res map[string]string) {
 	account := member.AccountModel{}
 	exists := account.Exists(handset)
 	if exists > 0 {
@@ -61,6 +61,7 @@ func (l *AccountLogic) Register(handset, password, pin string) (UID int) {
 	password = fmt.Sprintf("%x", w.Sum(nil))
 
 	// 注册
+	var UID int
 	UID, err = account.NewAccount(handset, password, "")
 	if err != nil {
 		beego.Error(err)
@@ -75,7 +76,23 @@ func (l *AccountLogic) Register(handset, password, pin string) (UID int) {
 		beego.Error(err)
 	}
 
-	return
+	random := util.Random{}
+	randomNum := random.Rand(100000, 999999)
+
+	// 生成token
+	tokenMd5 := md5.New()
+	io.WriteString(tokenMd5, salt+handset+strconv.FormatInt(randomNum, 10))
+	token := fmt.Sprintf("%x", tokenMd5.Sum(nil))
+
+	// 保存token
+	db, _ := beego.AppConfig.Int("redis_db_token")
+	redis := util.Cli{}
+	redis.Select(db)
+	key := "token:" + handset
+	redis.Set(key, token)
+	redis.SetEx(key, "3600")
+
+	return map[string]string{"uid": strconv.FormatInt(int64(UID), 10), "token": token}
 }
 
 // 发送注册验证码

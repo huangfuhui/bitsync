@@ -29,9 +29,9 @@ func (c *AccountController) Register() {
 	}
 
 	l := accountLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
-	l.Register(handset, password, pin)
+	res := l.Register(handset, password, pin)
 
-	c.Output("")
+	c.Output(res)
 }
 
 // 发送注册验证码
