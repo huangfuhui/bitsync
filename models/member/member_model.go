@@ -33,7 +33,7 @@ func (model *MemberModel) NewMember(uid int, name, handset, email string, sex in
 func (model *MemberModel) Get(UID int) (member.Member, error) {
 	memberInfo := member.Member{}
 	memberInfo.UID = UID
-	err := orm.NewOrm().Read(&memberInfo)
+	err := orm.NewOrm().Read(&memberInfo, "uid")
 
 	return memberInfo, err
 }
