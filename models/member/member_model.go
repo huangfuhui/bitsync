@@ -5,6 +5,7 @@ import (
 	"bitsync/object/member"
 	"time"
 	"github.com/astaxie/beego/orm"
+	"strconv"
 )
 
 type MemberModel struct {
@@ -12,7 +13,7 @@ type MemberModel struct {
 }
 
 // 新建会员
-func (model *MemberModel) NewMember(uid int, name, handset, email string, sex int, avatarUrl string, BirthDay time.Time) (member.Member, error) {
+func (m *MemberModel) NewMember(uid int, name, handset, email string, sex int, avatarUrl string, BirthDay time.Time) (member.Member, error) {
 	newMember := member.Member{
 		UID:       uid,
 		Name:      name,
@@ -30,10 +31,16 @@ func (model *MemberModel) NewMember(uid int, name, handset, email string, sex in
 }
 
 // 获取会员信息
-func (model *MemberModel) Get(UID int) (member.Member, error) {
+func (m *MemberModel) Get(UID int) (member.Member, error) {
 	memberInfo := member.Member{}
 	memberInfo.UID = UID
 	err := orm.NewOrm().Read(&memberInfo, "uid")
 
 	return memberInfo, err
+}
+
+// 更新会员信息
+func (m *MemberModel) Update(UID int, params orm.Params) error {
+	_, err := orm.NewOrm().QueryTable("member").Filter("uid", strconv.FormatInt(int64(UID), 10)).Update(params)
+	return err
 }
