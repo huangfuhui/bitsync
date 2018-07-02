@@ -49,5 +49,14 @@ func init() {
 		beego.NSRouter("/resetPassword", &account.AccountController{}, "post:ResetPassword"),
 	)
 
-	beego.AddNamespace(wechatNs, smsNs, accountNs)
+	// 用户管理
+	memberNs := beego.NewNamespace("/member",
+		beego.NSCond(func(ctx *context.Context) bool {
+			return true
+		}),
+
+		beego.NSRouter("/get", &account.MemberController{}, "get:Get"),
+	)
+
+	beego.AddNamespace(wechatNs, smsNs, accountNs, memberNs)
 }

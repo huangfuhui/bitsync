@@ -30,9 +30,9 @@ func (model *MemberModel) NewMember(uid int, name, handset, email string, sex in
 }
 
 // 获取会员信息
-func (model *MemberModel) Get(id int) (member.Member, error) {
+func (model *MemberModel) Get(UID int) (member.Member, error) {
 	memberInfo := member.Member{}
-	memberInfo.Id = id
+	memberInfo.UID = UID
 	err := orm.NewOrm().Read(&memberInfo)
 
 	return memberInfo, err
