@@ -99,3 +99,37 @@ create table sms_task_threshold_value (
   updated_at timestamp null default null,
   primary key (id)
 ) engine=InnoDB default charset=utf8 comment='短信阈值提醒任务';
+
+create table orders (
+  id int(10) unsigned not null auto_increment,
+  uid int(10) unsigned unique not null comment '用户UID',
+  amount int(10) unsigned not null comment '订单金额',
+  pay_way tinyint(3) not null comment '支付方式 [1.微信]',
+  sms_quantity int(10) unsigned not null comment '短信数量',
+  combo_id int(10) unsigned not null default '0' comment '套餐ID',
+  transaction_code varchar(30) not null comment '第三方支付交易流水号',
+  pay_status tinyint(3) unsigned not null default '0' comment '支付状态 [0.等待支付 1.成功支付 2.支付失败 3.取消支付]',
+  order_time timestamp not null comment '开单时间',
+  pay_time timestamp not null comment '支付时间',
+  created_at timestamp null default null,
+  updated_at timestamp null default null,
+  primary key (id)
+) engine=InnoDB default charset=utf8 comment='订单';
+
+create table combo (
+  id int(10) unsigned not null auto_increment,
+  name varchar(50) not null comment '套餐名称',
+  price int(10) unsigned not null comment '价格',
+  sms_quantity int(10) unsigned not null comment '短信数量',
+  descirbe varchar(100) null comment '简介',
+  status tinyint(3) unsigned not null default '1' comment '状态 [0.不可用 1.可用]',
+  created_at timestamp null default null,
+  updated_at timestamp null default null,
+  primary key (id)
+) engine=InnoDB default charset=utf8 comment='套餐';
+
+insert into combo(name, price, sms_quantity) values
+('套餐一', '1000', '40'),
+('套餐二', '2000', '100'),
+('套餐三', '5000', '300'),
+('套餐四', '10000', '666');
