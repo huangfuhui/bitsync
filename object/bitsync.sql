@@ -128,8 +128,43 @@ create table combo (
   primary key (id)
 ) engine=InnoDB default charset=utf8 comment='套餐';
 
-insert into combo(name, price, sms_quantity) values
-('套餐一', '1000', '40'),
-('套餐二', '2000', '100'),
-('套餐三', '5000', '300'),
-('套餐四', '10000', '666');
+create table coin (
+  id int(10) unsigned not null auto_increment,
+  name varchar(20) not null comment '名称',
+  name_cn varchar(40) not null comment '中文名称',
+  fullname varchar(100) null comment '全名',
+  official_website varchar(100) null comment '官网地址',
+  white_paper varchar(100) null comment '白皮书地址',
+  issue_date date null comment '发行时间',
+  issue_amount bigint(15) null comment '发行数量',
+  flow_amount bigint(15) null comment '流通量',
+  ico_price varchar(50) null comment '众筹价格',
+  blockchain_browser varchar(200) null comment '区跨链浏览器地址',
+  introduction text null comment '简介',
+  created_at timestamp null default null,
+  updated_at timestamp null default null,
+  primary key (id)
+) engine=InnoDB default charset=utf8 comment='货币信息';
+
+create table exchange (
+  id int(10) unsigned not null auto_increment,
+  exchange_id tinyint(3) not null comment '交易所ID [1.huobi 2.dragonex 3.okex 4.binance]',
+  name_cn varchar(100) not null comment '中文名称',
+  name_en varchar(100) not null comment '英文名称',
+  official_website varchar(100) null comment '官网地址',
+  logo varchar(100) null comment 'logo地址',
+  created_at timestamp null default null,
+  updated_at timestamp null default null,
+  primary key (id)
+) engine=InnoDB default charset=utf8 comment='交易所信息';
+
+create table price_pair (
+  id int(10) unsigned not null auto_increment,
+  name varchar(50) not null comment '名称 如:eos/usdt',
+  exchange_id int(10) unsigned not null comment '交易所ID',
+  created_at timestamp null default null,
+  updated_at timestamp null default null,
+  primary key (id)
+) engine=InnoDB default charset=utf8 comment='价格对';
+
+
