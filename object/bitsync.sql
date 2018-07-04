@@ -121,7 +121,7 @@ create table combo (
   name varchar(50) not null comment '套餐名称',
   price int(10) unsigned not null comment '价格',
   sms_quantity int(10) unsigned not null comment '短信数量',
-  descirbe varchar(100) null comment '简介',
+  description varchar(100) null comment '简介',
   status tinyint(3) unsigned not null default '1' comment '状态 [0.不可用 1.可用]',
   created_at timestamp null default null,
   updated_at timestamp null default null,

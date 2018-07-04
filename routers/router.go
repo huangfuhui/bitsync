@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego/context"
 	"bitsync/controllers/account"
 	"github.com/astaxie/beego/plugins/cors"
+	"bitsync/controllers/pay"
 )
 
 func init() {
@@ -58,5 +59,13 @@ func init() {
 		beego.NSRouter("/get", &account.MemberController{}, "get:Get"),
 	)
 
-	beego.AddNamespace(wechatNs, smsNs, accountNs, memberNs)
+	comboNs := beego.NewNamespace("/combo",
+		beego.NSCond(func(ctx *context.Context) bool {
+			return true
+		}),
+
+		beego.NSRouter("/get", &pay.ComboController{}, "get:Get"),
+	)
+
+	beego.AddNamespace(wechatNs, smsNs, accountNs, memberNs, comboNs)
 }

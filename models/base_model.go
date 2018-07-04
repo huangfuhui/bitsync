@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"bitsync/object/member"
+	"bitsync/object/pay"
 )
 
 type BaseModel struct {
@@ -34,5 +35,6 @@ func init() {
 	orm.RegisterModel(
 		new(member.Account),
 		new(member.Member),
+		new(pay.Combo),
 	)
 }
