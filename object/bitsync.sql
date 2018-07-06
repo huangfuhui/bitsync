@@ -161,7 +161,8 @@ create table exchange (
 
 create table price_pair (
   id int(10) unsigned not null auto_increment,
-  name varchar(50) not null comment '名称 如:eos/usdt',
+  coin_a_id int(10) unsigned not null comment '交易的货币ID',
+  coin_b_id int(10) unsigned not null comment '兑换的货币ID',
   exchange_id int(10) unsigned not null comment '交易所ID',
   created_at timestamp null default null,
   updated_at timestamp null default null,
