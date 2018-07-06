@@ -87,18 +87,20 @@ create table sms_failed_task (
   primary key (id)
 ) engine=InnoDB default charset=utf8 comment='短信失败任务';
 
-create table sms_task_threshold_value (
+create table task_threshold_value (
   id int(10) unsigned not null auto_increment,
   uid int(10) unsigned unique not null comment '用户UID',
-  symbol_pari varchar(20) not null comment '价格对',
-  exchange tinyint(3) unsigned not null comment '交易所 [1.huobi 2.dragonex]',
+  coin_a_id int(10) unsigned not null comment '交易的货币ID',
+  coin_b_id int(10) unsigned not null comment '兑换的货币ID',
+  symbol_pair varchar(20) not null comment '价格对',
+  exchange_id tinyint(3) unsigned not null comment '交易所ID',
   threshold_value varchar(20) not null comment '阈值',
   base_vale varchar(20) not null comment '基准值',
   deviation tinyint(1) not null comment '偏离方向 [1.大于 2.小于]',
   created_at timestamp null default null,
   updated_at timestamp null default null,
   primary key (id)
-) engine=InnoDB default charset=utf8 comment='短信阈值提醒任务';
+) engine=InnoDB default charset=utf8 comment='阈值提醒任务';
 
 create table orders (
   id int(10) unsigned not null auto_increment,
