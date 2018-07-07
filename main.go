@@ -8,6 +8,7 @@ import (
 	_ "bitsync/routers"
 	"bitsync/controllers"
 	"bitsync/task/server"
+	"bitsync/task"
 )
 
 func init() {
@@ -21,8 +22,8 @@ func init() {
 	beego.SetLogger(logs.AdapterFile, `{"filename":"log/bitsync.log","daily":true,"maxdays":7}`)
 
 	// 任务调度
-	// t := task.BaseTask{}
-	// t.Execute()
+	t := task.BaseTask{}
+	t.Execute()
 }
 
 func main() {

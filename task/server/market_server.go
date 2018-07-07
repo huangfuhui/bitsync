@@ -7,6 +7,8 @@ import (
 	"time"
 	"github.com/astaxie/beego"
 	"strings"
+	"bitsync/util"
+	"strconv"
 )
 
 type Market struct {
@@ -38,7 +40,6 @@ func market(w http.ResponseWriter, r *http.Request) {
 	}
 	defer con.Close()
 
-
 	huobiUsdt := strings.Split(beego.AppConfig.String("huobi::usdt_pair"), ",")
 	dragonexUsdt := strings.Split(beego.AppConfig.String("dragonex::usdt_pair"), ",")
 
@@ -50,11 +51,34 @@ func market(w http.ResponseWriter, r *http.Request) {
 		}
 
 		go func() {
-			for _, v := range huobiUsdt {
-				
+			market := Market{
+				Code: 200,
+				Msg:  "",
 			}
 
-			err = con.WriteMessage(websocket.TextMessage, []byte("hello word"))
+			redisCon := util.Redis.Con()
+			for _, v := range huobiUsdt {
+				key := "huobi:" + v + "usdt"
+				priceStr, _ := util.Redis.Get(redisCon, key)
+				price, _ := strconv.Atoi(priceStr)
+				market.Response = append(market.Response, SymbolPair{
+					ExchangeId: 1,
+					Symbol:     v + "/usdt",
+					Price:      price,
+				})
+			}
+			for _, v := range dragonexUsdt {
+				key := "dragonex:" + v + "usdt"
+				priceStr, _ := util.Redis.Get(redisCon, key)
+				price, _ := strconv.Atoi(priceStr)
+				market.Response = append(market.Response, SymbolPair{
+					ExchangeId: 2,
+					Symbol:     v + "/usdt",
+					Price:      price,
+				})
+			}
+
+			err = con.WriteJSON(market)
 			if err != nil {
 				beego.Warn("[行情服务]write:", err)
 			}
