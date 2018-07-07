@@ -14,7 +14,6 @@ import (
 	"strconv"
 	"encoding/json"
 	"bitsync/util"
-	"time"
 )
 
 type HuobiService struct {
@@ -87,11 +86,11 @@ func (service *HuobiService) WatchHuobi() {
 
 		// 2.价格信息订阅
 		beego.Info("【火币】开始价格订阅.")
-		pricePairs := beego.AppConfig.String("huobi::price_pairs")
-		priceSlice := strings.Split(pricePairs, ",")
-		for _, v := range priceSlice {
+		usdtPairs := beego.AppConfig.String("huobi::usdt_pair")
+		usdtSlice := strings.Split(usdtPairs, ",")
+		for _, v := range usdtSlice {
 			// 发起订阅
-			err := con.WriteMessage(websocket.TextMessage, []byte(`{"sub":"market.`+v+`.kline.1min","id":"`+v+`"}`))
+			err := con.WriteMessage(websocket.TextMessage, []byte(`{"sub":"market.`+v+`usdt.kline.1min","id":"`+v+`usdt"}`))
 			if err != nil {
 				beego.Error(err.Error())
 				beego.Info("【火币】websocket通信关闭.")
@@ -138,8 +137,7 @@ func (service *HuobiService) WatchHuobi() {
 
 			prices <- kLine.Ch + ":" + strconv.FormatFloat(kLine.Tick.Close, 'f', 4, 64)
 		}
-		beego.Info("【火币】5秒后尝试重连websocket.")
-		time.Sleep(5 * time.Second)
+		beego.Info("【火币】尝试重连websocket.")
 	}
 }
 

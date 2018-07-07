@@ -7,7 +7,6 @@ import (
 	_ "bitsync/util"
 	_ "bitsync/routers"
 	"bitsync/controllers"
-	"bitsync/services"
 	"bitsync/task"
 )
 
@@ -20,13 +19,6 @@ func init() {
 
 	beego.SetLogFuncCall(true)
 	beego.SetLogger(logs.AdapterFile, `{"filename":"log/bitsync.log","daily":true,"maxdays":7}`)
-
-	huobi := services.HuobiService{}
-	dragonex := services.DragonexService{}
-
-	// 启动价格监控
-	go huobi.WatchHuobi()
-	go dragonex.WatchDragonex()
 
 	// 任务调度
 	t := task.BaseTask{}

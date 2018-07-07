@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"github.com/bitly/go-simplejson"
 	"strconv"
-	"time"
 	"bitsync/util"
 )
 
@@ -30,10 +29,18 @@ func (service *DragonexService) WatchDragonex() {
 
 	defer beego.Info("【龙交所】价格信息同步关闭.")
 
+	usdtPair := beego.AppConfig.String("dragonex::usdt_pair")
+
 	beego.Info("【龙交所】价格信息同步开始.")
 	for {
 		priceMap := make(map[string]string)
 		for k, v := range symbols {
+			// 过滤不需要的货币
+			symbolSli := strings.Split(k, "_")
+			if !strings.Contains(usdtPair, symbolSli[0]) && symbolSli[1] != "usdt" {
+				continue
+			}
+
 			client := &http.Client{}
 			conUrl := url.URL{Scheme: dragonexScheme, Host: dragonexUrl, Path: apiMarketRealSli[1]}
 			conValue := url.Values{}
@@ -92,9 +99,6 @@ func (service *DragonexService) WatchDragonex() {
 		}
 
 		beego.Debug("【龙交所】成功完成一次价格同步.")
-
-		// 间隔2秒钟请求一次价格信息
-		time.Sleep(2 * time.Second)
 	}
 }
 

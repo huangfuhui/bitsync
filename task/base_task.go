@@ -8,12 +8,17 @@ type BaseTask struct {
 func (task *BaseTask) Execute() {
 	beego.Info("【任务调度】开始分发任务.")
 
+	// 价格监控
+	go func() {
+		priceWatch := PriceWatchTask{}
+		priceWatch.Watch()
+	}()
+
 	// 价格提醒
-	go func(){
+	go func() {
 		priceWarn := WarnTask{}
 		priceWarn.Warn()
 	}()
-
 
 	beego.Info("【任务调度】任务分发完成.")
 }
