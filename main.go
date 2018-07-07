@@ -7,7 +7,7 @@ import (
 	_ "bitsync/util"
 	_ "bitsync/routers"
 	"bitsync/controllers"
-	"bitsync/task"
+	"bitsync/task/server"
 )
 
 func init() {
@@ -21,12 +21,16 @@ func init() {
 	beego.SetLogger(logs.AdapterFile, `{"filename":"log/bitsync.log","daily":true,"maxdays":7}`)
 
 	// 任务调度
-	t := task.BaseTask{}
-	t.Execute()
+	// t := task.BaseTask{}
+	// t.Execute()
 }
 
 func main() {
 	beego.ErrorController(&controllers.ErrorController{})
+
+	// 启动行情服务器
+	beego.Info("启动行情服务器...")
+	go server.MarketServer()
 
 	beego.Info("初始化完成,启动应用...")
 	beego.Run()
