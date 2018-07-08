@@ -17,9 +17,9 @@ type Market struct {
 }
 
 type SymbolPair struct {
-	ExchangeId int    `json:"exchange_id"`
-	Symbol     string `json:"symbol"`
-	Price      int    `json:"price"`
+	ExchangeId int     `json:"exchange_id"`
+	Symbol     string  `json:"symbol"`
+	Price      float64 `json:"price"`
 }
 
 // 查询行情
@@ -55,11 +55,11 @@ func market(w http.ResponseWriter, r *http.Request) {
 				Msg:  "",
 			}
 
-			redisCon := util.Redis.Con()
 			for _, v := range huobiUsdt {
 				key := "huobi:" + v + "usdt"
+				redisCon := util.Redis.Con()
 				priceStr, _ := util.Redis.Get(redisCon, key)
-				price, _ := strconv.Atoi(priceStr)
+				price, _ := strconv.ParseFloat(priceStr, 64)
 				market.Response = append(market.Response, SymbolPair{
 					ExchangeId: 1,
 					Symbol:     v + "/usdt",
@@ -68,8 +68,9 @@ func market(w http.ResponseWriter, r *http.Request) {
 			}
 			for _, v := range dragonexUsdt {
 				key := "dragonex:" + v + "usdt"
+				redisCon := util.Redis.Con()
 				priceStr, _ := util.Redis.Get(redisCon, key)
-				price, _ := strconv.Atoi(priceStr)
+				price, _ := strconv.ParseFloat(priceStr, 64)
 				market.Response = append(market.Response, SymbolPair{
 					ExchangeId: 2,
 					Symbol:     v + "/usdt",
