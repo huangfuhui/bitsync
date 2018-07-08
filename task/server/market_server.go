@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"flag"
 	"github.com/gorilla/websocket"
 	"time"
 	"github.com/astaxie/beego"
@@ -88,10 +87,8 @@ func market(w http.ResponseWriter, r *http.Request) {
 }
 
 func MarketServer() {
-	addr := flag.String("addr", "localhost:8088", "http service address")
-	flag.Parse()
 	http.HandleFunc("/market", market)
-	err := http.ListenAndServe(*addr, nil)
+	err := http.ListenAndServe("localhost:8088", nil)
 	if err != nil {
 		beego.Error("[行情服务]", err)
 	}
