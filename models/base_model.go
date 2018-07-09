@@ -7,6 +7,7 @@ import (
 	"bitsync/object/member"
 	"bitsync/object/pay"
 	"bitsync/object/sms"
+	"bitsync/object/coin"
 )
 
 type BaseModel struct {
@@ -40,5 +41,6 @@ func init() {
 		new(sms.SmsWallet),
 		new(sms.SmsTask),
 		new(sms.TaskThresholdValue),
+		new(coin.Coin),
 	)
 }

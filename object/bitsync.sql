@@ -132,7 +132,7 @@ create table combo (
 
 create table coin (
   id int(10) unsigned not null auto_increment,
-  name varchar(20) not null comment '名称',
+  name varchar(20) unique not null comment '名称',
   name_cn varchar(40) not null comment '中文名称',
   full_name varchar(100) null comment '全名',
   icoin varchar(200) null comment '图标',
