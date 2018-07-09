@@ -38,5 +38,7 @@ func init() {
 		new(member.Member),
 		new(pay.Combo),
 		new(sms.SmsWallet),
+		new(sms.SmsTask),
+		new(sms.TaskThresholdValue),
 	)
 }
