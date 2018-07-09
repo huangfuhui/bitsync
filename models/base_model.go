@@ -42,5 +42,6 @@ func init() {
 		new(sms.SmsTask),
 		new(sms.TaskThresholdValue),
 		new(coin.Coin),
+		new(coin.Exchange),
 	)
 }
