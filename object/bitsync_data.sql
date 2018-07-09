@@ -11,7 +11,7 @@ insert into exchange(exchange_id, name_cn, name_en, official_website) values
 (3, 'okex', 'okex', 'https://www.okex.com/'),
 (4, '币安', 'binance', 'https://www.binance.com');
 
-insert into coin(name, name_cn, fullname, icoin, official_website, white_paper, issue_date, issue_amount, flow_amount, ico_price, blockchain_browser, introduction) values
+insert into coin(name, name_cn, full_name, icoin, official_website, white_paper, issue_date, issue_amount, flow_amount, ico_price, blockchain_browser, introduction) values
 ('btc', '比特币', 'Bitcoin', '', 'https://bitcoin.org', '', '2009-01-03', 21000000, 0, '', '', ''),
 ('xrp', '瑞波币', 'Ripple', '', 'https://ripple.com', '', '2011-04-18', 100000000000, 100000000000, '', '', ''),
 ('eth', '以太坊', 'Ethereum', '', 'https://www.ethereum.org/', '', '2014-07-24', 963115000, 963115000, '', '', ''),

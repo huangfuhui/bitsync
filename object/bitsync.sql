@@ -134,7 +134,7 @@ create table coin (
   id int(10) unsigned not null auto_increment,
   name varchar(20) not null comment '名称',
   name_cn varchar(40) not null comment '中文名称',
-  fullname varchar(100) null comment '全名',
+  full_name varchar(100) null comment '全名',
   icoin varchar(200) null comment '图标',
   official_website varchar(100) null comment '官网地址',
   white_paper varchar(100) null comment '白皮书地址',
