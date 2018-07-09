@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"bitsync/object/member"
 	"bitsync/object/pay"
+	"bitsync/object/sms"
 )
 
 type BaseModel struct {
@@ -36,5 +37,6 @@ func init() {
 		new(member.Account),
 		new(member.Member),
 		new(pay.Combo),
+		new(sms.SmsWallet),
 	)
 }
