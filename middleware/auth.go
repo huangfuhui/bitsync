@@ -2,8 +2,9 @@ package middleware
 
 import (
 	"bitsync/util"
-	"strconv"
-	"time"
+	"encoding/base64"
+	"github.com/astaxie/beego"
+	"strings"
 )
 
 type Auth struct {
@@ -16,12 +17,29 @@ func (auth *Auth) Verify() bool {
 	if token == "" {
 		return false
 	}
-	redis := util.Cli{}
-	redis.Select(0)
-	res, _ := redis.Get("token:" + token)
-	if res != "" {
-		redis.Set("token:"+token, strconv.FormatInt(time.Now().Unix(), 64))
+
+	// 解密token
+	res, err := base64.StdEncoding.DecodeString(token)
+	if err != nil {
+		return false
+	} else {
+		decodeToken := strings.Split(string(res), ":")
+
+		db, _ := beego.AppConfig.Int("redis_db_token")
+		redis := util.Cli{}
+		redis.Select(db)
+		localToken, err := redis.Get("token:" + decodeToken[1])
+		if err != nil {
+			return false
+		} else if localToken != token {
+			return false
+		}
+
+		// 刷新token有效期
+		redis.SetEx("token:"+decodeToken[1], "3600")
+
 		return true
 	}
+
 	return false
 }

@@ -21,5 +21,5 @@ func (base *Base) Auth(middlewares ...interface{}) bool {
 		}
 	}
 
-	return false
+	return true
 }
