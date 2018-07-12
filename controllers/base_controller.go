@@ -9,7 +9,7 @@ import (
 	"bitsync/util"
 )
 
-type response struct {
+type Response struct {
 	Code     int         `json:"code"`
 	Response interface{} `json:"response"`
 	Msg      string      `json:"msg"`
@@ -95,7 +95,7 @@ func (c *BaseController) GetAccount() (handset string) {
 
 // 正常响应输出JSON数据
 func (c *BaseController) Output(data interface{}) {
-	responseData := new(response)
+	responseData := new(Response)
 	responseData.Code = http.StatusOK
 	responseData.Response = data
 	responseData.Msg = ""
@@ -107,7 +107,7 @@ func (c *BaseController) Output(data interface{}) {
 
 // 自定义响应输出JSON数据
 func (c *BaseController) OutputDefined(code int, data interface{}, msg string) {
-	responseData := new(response)
+	responseData := new(Response)
 	responseData.Code = code
 	responseData.Response = data
 	responseData.Msg = msg
@@ -119,7 +119,7 @@ func (c *BaseController) OutputDefined(code int, data interface{}, msg string) {
 
 // 请求参数错误
 func (c *BaseController) BadRequest(msg string) {
-	responseData := new(response)
+	responseData := new(Response)
 	responseData.Code = http.StatusBadRequest
 	responseData.Response = ""
 	responseData.Msg = msg
@@ -131,7 +131,7 @@ func (c *BaseController) BadRequest(msg string) {
 
 // 服务器错误
 func (c *BaseController) ServerError() {
-	responseData := new(response)
+	responseData := new(Response)
 	responseData.Code = http.StatusInternalServerError
 	responseData.Response = ""
 	responseData.Msg = "服务器错误"
@@ -143,7 +143,7 @@ func (c *BaseController) ServerError() {
 
 // 业务错误
 func (c *BaseController) Warn(msg string) {
-	responseData := new(response)
+	responseData := new(Response)
 	responseData.Code = -1
 	responseData.Response = ""
 	responseData.Msg = msg

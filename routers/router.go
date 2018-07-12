@@ -8,6 +8,7 @@ import (
 	"bitsync/controllers/account"
 	"github.com/astaxie/beego/plugins/cors"
 	"bitsync/controllers/pay"
+	"bitsync/middleware"
 )
 
 func init() {
@@ -52,8 +53,9 @@ func init() {
 
 	// 用户管理
 	memberNs := beego.NewNamespace("/member",
-		beego.NSCond(func(ctx *context.Context) bool {
-			return true
+		beego.NSBefore(func(ctx *context.Context){
+			m := middleware.Base{ctx}
+			m.Auth(middleware.Auth{})
 		}),
 
 		beego.NSRouter("/get", &account.MemberController{}, "get:Get"),
