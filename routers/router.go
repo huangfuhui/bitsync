@@ -21,31 +21,44 @@ func init() {
 		AllowCredentials: true,
 	}))
 
+	// 微信授权
 	wechatNs := beego.NewNamespace("/wechat",
-		beego.NSCond(func(ctx *context.Context) bool {
-			return true
+		beego.NSBefore(func(ctx *context.Context) {
+			m := middleware.Base{ctx}
+			m.Auth()
 		}),
 
 		beego.NSRouter("/auth", &wechat.IndexController{}, "get:Auth;post:Dispatch"),
 	)
 
 	smsNs := beego.NewNamespace("/sms",
-		beego.NSCond(func(ctx *context.Context) bool {
-			return true
+		beego.NSBefore(func(ctx *context.Context) {
+			m := middleware.Base{ctx}
+			m.Auth()
 		}),
 
 		beego.NSRouter("/index", &sms.IndexController{}, "get:Index"),
 	)
 
 	// 账号管理
-	accountNs := beego.NewNamespace("/account",
-		beego.NSCond(func(ctx *context.Context) bool {
-			return true
+	loginNs := beego.NewNamespace("/account",
+		beego.NSBefore(func(ctx *context.Context) {
+			m := middleware.Base{ctx}
+			m.Auth()
 		}),
 
 		beego.NSRouter("/register", &account.AccountController{}, "post:Register"),
 		beego.NSRouter("/registerPin", &account.AccountController{}, "post:RegisterPin"),
 		beego.NSRouter("/login", &account.AccountController{}, "post:Login"),
+	)
+
+	// 账号管理
+	accountNs := beego.NewNamespace("/account",
+		beego.NSBefore(func(ctx *context.Context) {
+			m := middleware.Base{ctx}
+			m.Auth(middleware.Auth{})
+		}),
+
 		beego.NSRouter("/modifyPassword", &account.AccountController{}, "post:ModifyPassword"),
 		beego.NSRouter("/passwordPin", &account.AccountController{}, "post:PasswordPin"),
 		beego.NSRouter("/resetPassword", &account.AccountController{}, "post:ResetPassword"),
@@ -53,7 +66,7 @@ func init() {
 
 	// 用户管理
 	memberNs := beego.NewNamespace("/member",
-		beego.NSBefore(func(ctx *context.Context){
+		beego.NSBefore(func(ctx *context.Context) {
 			m := middleware.Base{ctx}
 			m.Auth(middleware.Auth{})
 		}),
@@ -63,8 +76,9 @@ func init() {
 
 	// 短信套餐
 	comboNs := beego.NewNamespace("/combo",
-		beego.NSCond(func(ctx *context.Context) bool {
-			return true
+		beego.NSBefore(func(ctx *context.Context) {
+			m := middleware.Base{ctx}
+			m.Auth()
 		}),
 
 		beego.NSRouter("/get", &pay.ComboController{}, "get:Get"),
@@ -72,12 +86,13 @@ func init() {
 
 	// 预警任务
 	taskNs := beego.NewNamespace("/task",
-		beego.NSCond(func(ctx *context.Context) bool {
-			return true
+		beego.NSBefore(func(ctx *context.Context) {
+			m := middleware.Base{ctx}
+			m.Auth(middleware.Auth{})
 		}),
 
 		beego.NSRouter("/add", &sms.TaskController{}, "post:Add"),
 	)
 
-	beego.AddNamespace(wechatNs, smsNs, accountNs, memberNs, comboNs, taskNs)
+	beego.AddNamespace(wechatNs, smsNs, loginNs, accountNs, memberNs, comboNs, taskNs)
 }
