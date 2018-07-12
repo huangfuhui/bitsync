@@ -59,6 +59,7 @@ func init() {
 		beego.NSRouter("/get", &account.MemberController{}, "get:Get"),
 	)
 
+	// 短信套餐
 	comboNs := beego.NewNamespace("/combo",
 		beego.NSCond(func(ctx *context.Context) bool {
 			return true
@@ -67,5 +68,14 @@ func init() {
 		beego.NSRouter("/get", &pay.ComboController{}, "get:Get"),
 	)
 
-	beego.AddNamespace(wechatNs, smsNs, accountNs, memberNs, comboNs)
+	// 预警任务
+	taskNs := beego.NewNamespace("/task",
+		beego.NSCond(func(ctx *context.Context) bool {
+			return true
+		}),
+
+		beego.NSRouter("/add", &sms.TaskController{}, "post:Add"),
+	)
+
+	beego.AddNamespace(wechatNs, smsNs, accountNs, memberNs, comboNs, taskNs)
 }
