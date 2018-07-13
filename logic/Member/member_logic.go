@@ -5,6 +5,8 @@ import (
 	"bitsync/models/member"
 	"github.com/astaxie/beego"
 	"strconv"
+	"github.com/astaxie/beego/orm"
+	"time"
 )
 
 type MemberLogic struct {
@@ -34,4 +36,29 @@ func (l *MemberLogic) Get() map[string]string {
 	res["avatar_url"] = info.AvatarUrl
 
 	return res
+}
+
+// 更新用户信息
+func (l *MemberLogic) Update(name, email string, sex int, birthday string) {
+	UID := l.GetUID()
+
+	birth, err := time.Parse("2006-01-02 15:04:05", birthday)
+	if err != nil {
+		beego.Error(err)
+		l.Warn("更新失败")
+		return
+	}
+
+	m := member.MemberModel{}
+	err = m.Update(UID, orm.Params{
+		"Name":     name,
+		"Email":    email,
+		"Sex":      sex,
+		"Birthday": birth,
+	})
+	if err != nil {
+		beego.Error(err)
+		l.Warn("更新失败")
+		return
+	}
 }

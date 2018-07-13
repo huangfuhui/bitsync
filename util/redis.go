@@ -137,10 +137,10 @@ func (cli *Cli) Lindex(list, index string) (string, error) {
 	return str, err
 }
 
-func (cli *Cli) SetEx(key, value string) error {
+func (cli *Cli) SetEx(key string, seconds int) error {
 	dbNum := redis.DialDatabase(cli.DB)
 	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
-	_, err := con.Do("set", key, value, "ex", cli.Ex)
+	_, err := con.Do("expire", key, seconds)
 	defer con.Close()
 	return err
 }

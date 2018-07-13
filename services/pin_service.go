@@ -84,7 +84,7 @@ func (service *PinService) Send(businessCode, handset string) (string, error) {
 	redis.Lpush(key, value)
 	redis.Ltrim(key, "0", "9")
 	// 更新验证码记录有效期为一天
-	redis.SetEx(key, "86400")
+	redis.SetEx(key, 86400)
 
 	return pin, nil
 }

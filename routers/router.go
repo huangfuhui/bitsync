@@ -40,7 +40,7 @@ func init() {
 		beego.NSRouter("/index", &sms.IndexController{}, "get:Index"),
 	)
 
-	// 账号管理
+	// 注册登录
 	loginNs := beego.NewNamespace("/account",
 		beego.NSBefore(func(ctx *context.Context) {
 			m := middleware.Base{ctx}
@@ -72,6 +72,7 @@ func init() {
 		}),
 
 		beego.NSRouter("/get", &member.MemberController{}, "get:Get"),
+		beego.NSRouter("/update", &member.MemberController{}, "post:Update"),
 	)
 
 	// 短信套餐

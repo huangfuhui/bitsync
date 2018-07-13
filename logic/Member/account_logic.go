@@ -90,7 +90,7 @@ func (l *AccountLogic) Register(handset, password, pin string) (res map[string]s
 	redis.Select(db)
 	key := "token:" + handset
 	redis.Set(key, token)
-	redis.SetEx(key, "3600")
+	redis.SetEx(key, 3600)
 
 	return map[string]string{"uid": strconv.FormatInt(int64(UID), 10), "token": token}
 }
@@ -133,7 +133,7 @@ func (l *AccountLogic) Login(handset, password string) (res map[string]string) {
 	redis.Select(db)
 	key := "token:" + handset
 	redis.Set(key, token)
-	redis.SetEx(key, "3600")
+	redis.SetEx(key, 3600)
 
 	return map[string]string{"token": token}
 }

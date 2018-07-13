@@ -36,7 +36,7 @@ func (auth *Auth) Verify() bool {
 		}
 
 		// 刷新token有效期
-		redis.SetEx("token:"+decodeToken[1], "3600")
+		redis.SetEx("token:"+decodeToken[1], 3600)
 
 		return true
 	}
