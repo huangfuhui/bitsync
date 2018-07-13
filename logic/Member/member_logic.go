@@ -42,7 +42,7 @@ func (l *MemberLogic) Get() map[string]string {
 func (l *MemberLogic) Update(name, email string, sex int, birthday string) {
 	UID := l.GetUID()
 
-	birth, err := time.Parse("2006-01-02 15:04:05", birthday)
+	birth, err := time.Parse("2006-01-02", birthday)
 	if err != nil {
 		beego.Error(err)
 		l.Warn("更新失败")

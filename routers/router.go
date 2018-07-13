@@ -53,7 +53,7 @@ func init() {
 	)
 
 	// 账号管理
-	accountNs := beego.NewNamespace("/account",
+	accountNs := beego.NewNamespace("/accountManage",
 		beego.NSBefore(func(ctx *context.Context) {
 			m := middleware.Base{ctx}
 			m.Auth(middleware.Auth{})
