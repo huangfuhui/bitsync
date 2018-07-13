@@ -1,9 +1,9 @@
-package account
+package member
 
 import (
 	"bitsync/controllers"
 	"bitsync/logic"
-	"bitsync/logic/account"
+	"bitsync/logic/Member"
 )
 
 type MemberController struct {
@@ -12,7 +12,7 @@ type MemberController struct {
 
 // 获取会员信息
 func (c *MemberController) Get() {
-	l := account.MemberLogic{logic.BaseLogic{c.BaseController}}
+	l := Member.MemberLogic{logic.BaseLogic{c.BaseController}}
 	res := l.Get()
 
 	c.Output(res)

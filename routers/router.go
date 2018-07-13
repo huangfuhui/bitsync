@@ -5,10 +5,10 @@ import (
 	"bitsync/controllers/wechat"
 	"bitsync/controllers/sms"
 	"github.com/astaxie/beego/context"
-	"bitsync/controllers/account"
 	"github.com/astaxie/beego/plugins/cors"
 	"bitsync/controllers/pay"
 	"bitsync/middleware"
+	"bitsync/controllers/member"
 )
 
 func init() {
@@ -47,9 +47,9 @@ func init() {
 			m.Auth()
 		}),
 
-		beego.NSRouter("/register", &account.AccountController{}, "post:Register"),
-		beego.NSRouter("/registerPin", &account.AccountController{}, "post:RegisterPin"),
-		beego.NSRouter("/login", &account.AccountController{}, "post:Login"),
+		beego.NSRouter("/register", &member.AccountController{}, "post:Register"),
+		beego.NSRouter("/registerPin", &member.AccountController{}, "post:RegisterPin"),
+		beego.NSRouter("/login", &member.AccountController{}, "post:Login"),
 	)
 
 	// 账号管理
@@ -59,9 +59,9 @@ func init() {
 			m.Auth(middleware.Auth{})
 		}),
 
-		beego.NSRouter("/modifyPassword", &account.AccountController{}, "post:ModifyPassword"),
-		beego.NSRouter("/passwordPin", &account.AccountController{}, "post:PasswordPin"),
-		beego.NSRouter("/resetPassword", &account.AccountController{}, "post:ResetPassword"),
+		beego.NSRouter("/modifyPassword", &member.AccountController{}, "post:ModifyPassword"),
+		beego.NSRouter("/passwordPin", &member.AccountController{}, "post:PasswordPin"),
+		beego.NSRouter("/resetPassword", &member.AccountController{}, "post:ResetPassword"),
 	)
 
 	// 用户管理
@@ -71,7 +71,7 @@ func init() {
 			m.Auth(middleware.Auth{})
 		}),
 
-		beego.NSRouter("/get", &account.MemberController{}, "get:Get"),
+		beego.NSRouter("/get", &member.MemberController{}, "get:Get"),
 	)
 
 	// 短信套餐
