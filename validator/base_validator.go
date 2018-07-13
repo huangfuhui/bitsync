@@ -4,6 +4,8 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/astaxie/beego"
 	"bitsync/controllers"
+	"time"
+	"strings"
 )
 
 type BaseValidator struct {
@@ -32,6 +34,50 @@ func init() {
 		"Tel":          "必须是座机号码",
 		"Phone":        "必须是座机或者手机号码",
 		"ZipCode":      "必须是邮政编码",
+		"Date":         "必须是 2006-01-02 格式的时间字符串",
+		"DateTime":     "必须是 2006-01-02 15:04:05 格式的时间字符串",
+		"Time":         "必须是 15:04:05 格式的时间字符串",
+	})
+
+	// 日期与时间校验
+	validation.AddCustomFunc("Date", func(v *validation.Validation, obj interface{}, key string) {
+		_, err := time.Parse("2006-01-02", obj.(string))
+		if err != nil {
+			e := validation.Error{
+				Key:     key,
+				Name:    "Date",
+				Field:   strings.Split(key, ".")[1],
+				Value:   obj.(string),
+				Message: "必须是 2006-01-02 格式的时间字符串",
+			}
+			v.Errors = append(v.Errors, &e)
+		}
+	})
+	validation.AddCustomFunc("Time", func(v *validation.Validation, obj interface{}, key string) {
+		_, err := time.Parse("15:04:05", obj.(string))
+		if err != nil {
+			e := validation.Error{
+				Key:     key,
+				Name:    "Time",
+				Field:   strings.Split(key, ".")[1],
+				Value:   obj.(string),
+				Message: "必须是 15:04:05 格式的时间字符串",
+			}
+			v.Errors = append(v.Errors, &e)
+		}
+	})
+	validation.AddCustomFunc("DateTime", func(v *validation.Validation, obj interface{}, key string) {
+		_, err := time.Parse("2006-01-02 15:04:05", obj.(string))
+		if err != nil {
+			e := validation.Error{
+				Key:     key,
+				Name:    "DateTime",
+				Field:   strings.Split(key, ".")[1],
+				Value:   obj.(string),
+				Message: "必须是 2006-01-02 15:04:05 格式的时间字符串",
+			}
+			v.Errors = append(v.Errors, &e)
+		}
 	})
 }
 
