@@ -17,7 +17,7 @@ type TaskLogic struct {
 }
 
 // 添加预警任务
-func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation int, value float64) {
+func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation int, value string) {
 	UID := l.GetUID()
 
 	symbolPairSli := strings.Split(symbolPair, "_")
@@ -42,13 +42,14 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 	redis.Select(db)
 	currentPriceStr, _ := redis.Get(key)
 	currentPrice, _ := strconv.ParseFloat(currentPriceStr, 64)
+	taskValue, _ := strconv.ParseFloat(value, 64)
 
 	if taskType == sms.TYPE_THRESOLD_VALUE {
 		// 判断任务阈值有效性
-		if deviation == sms.DEVIATION_GT && value <= currentPrice {
+		if deviation == sms.DEVIATION_GT && taskValue <= currentPrice {
 			l.BadRequest("价格不能小于等于当前价格")
 			return
-		} else if deviation == sms.DEVIATION_LT && value >= currentPrice {
+		} else if deviation == sms.DEVIATION_LT && taskValue >= currentPrice {
 			l.BadRequest("价格不能大于等于当前价格")
 			return
 		}
@@ -73,7 +74,7 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 		CoinBId:        coinB.Id,
 		SymbolPair:     symbolPair,
 		ExchangeId:     exchangeId,
-		ThresholdValue: strconv.FormatFloat(value, 'f', 15, 64),
+		ThresholdValue: value,
 		BaseValue:      currentPriceStr,
 		Deviation:      deviation,
 	}

@@ -58,9 +58,8 @@ func (service *DragonexService) WatchDragonex() {
 
 			resp, err := client.Do(req)
 			if err != nil {
-				resp.Body.Close()
 				beego.Error(err)
-				return
+				continue
 			}
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
@@ -68,6 +67,7 @@ func (service *DragonexService) WatchDragonex() {
 				return
 			} else if http.StatusOK != resp.StatusCode {
 				beego.Error(string(body))
+				continue
 			}
 
 			// 解析价格

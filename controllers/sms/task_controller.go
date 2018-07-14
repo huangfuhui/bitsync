@@ -4,7 +4,8 @@ import (
 	"bitsync/controllers"
 	"bitsync/validator"
 	"bitsync/validator/sms"
-	logic "bitsync/logic/sms"
+	smsLogic "bitsync/logic/sms"
+	"bitsync/logic"
 )
 
 type TaskController struct {
@@ -17,7 +18,7 @@ func (c *TaskController) Add() {
 	exchangeId, _ := c.GetInt("exchange_id")
 	symbolPair := c.GetString("symbol_pair")
 	deviation, _ := c.GetInt("deviation")
-	value, _ := c.GetFloat("value")
+	value := c.GetString("value")
 
 	v := validator.BaseValidator{}
 	ok := v.Validate(&c.BaseController, sms.AddTask{
@@ -31,7 +32,7 @@ func (c *TaskController) Add() {
 		return
 	}
 
-	l := logic.TaskLogic{}
+	l := smsLogic.TaskLogic{logic.BaseLogic{c.BaseController}}
 	l.Add(types, exchangeId, symbolPair, deviation, value)
 
 	c.Output("")

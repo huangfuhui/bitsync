@@ -30,7 +30,7 @@ create table account (
 
 create table member (
   id int(10) unsigned not null auto_increment,
-  uid int(10) unsigned not null comment '用户UID',
+  uid int(10) unsigned unique not null comment '用户UID',
   name varchar(20) not null comment '昵称',
   handset varchar(20) not null comment '手机号码',
   email varchar(50) not null comment '邮箱',
@@ -54,7 +54,7 @@ create table sms_wallet (
 
 create table sms_consume_record (
   id int(10) unsigned not null auto_increment,
-  uid int(10) unsigned unique not null comment '用户UID',
+  uid int(10) unsigned not null comment '用户UID',
   handset varchar(20) not null comment '手机号码',
   amount int(10) unsigned not null comment '消费条数',
   sms_content text not null comment '短信内容',
@@ -67,7 +67,7 @@ create table sms_consume_record (
 
 create table sms_task (
   id int(10) unsigned not null auto_increment,
-  uid int(10) unsigned unique not null comment '用户UID',
+  uid int(10) unsigned not null comment '用户UID',
   task_id int(10) unsigned not null comment '任务ID',
   type tinyint(3) unsigned not null comment '任务类型 [1.阈值提醒]',
   status tinyint(3) unsigned not null default '0' comment '任务状态 [0.等待 1.成功 2.失败 3.取消]',
@@ -79,7 +79,7 @@ create table sms_task (
 
 create table sms_failed_task (
   id int(10) unsigned not null auto_increment,
-  uid int(10) unsigned unique not null comment '用户UID',
+  uid int(10) unsigned not null comment '用户UID',
   sms_task_id int(10) unsigned not null comment '短信任务ID',
   failed_reason varchar(100) default '' comment '失败原因',
   created_at timestamp null default null,
@@ -89,13 +89,13 @@ create table sms_failed_task (
 
 create table task_threshold_value (
   id int(10) unsigned not null auto_increment,
-  uid int(10) unsigned unique not null comment '用户UID',
+  uid int(10) unsigned not null comment '用户UID',
   coin_a_id int(10) unsigned not null comment '交易的货币ID',
   coin_b_id int(10) unsigned not null comment '兑换的货币ID',
   symbol_pair varchar(20) not null comment '价格对',
   exchange_id tinyint(3) unsigned not null comment '交易所ID',
   threshold_value varchar(20) not null comment '阈值',
-  base_vale varchar(20) not null comment '基准值',
+  base_value varchar(20) not null comment '基准值',
   deviation tinyint(1) not null comment '偏离方向 [1.大于 2.小于]',
   created_at timestamp null default null,
   updated_at timestamp null default null,
@@ -104,7 +104,7 @@ create table task_threshold_value (
 
 create table orders (
   id int(10) unsigned not null auto_increment,
-  uid int(10) unsigned unique not null comment '用户UID',
+  uid int(10) unsigned not null comment '用户UID',
   amount int(10) unsigned not null comment '订单金额',
   pay_way tinyint(3) not null comment '支付方式 [1.微信]',
   sms_quantity int(10) unsigned not null comment '短信数量',
