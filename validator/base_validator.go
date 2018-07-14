@@ -48,7 +48,7 @@ func init() {
 			e := validation.Error{
 				Key:     key,
 				Name:    "Date",
-				Field:   strings.Split(key, ".")[1],
+				Field:   strings.Split(key, ".")[0],
 				Value:   obj.(string),
 				Message: "必须是 2006-01-02 格式的时间字符串",
 			}
@@ -65,7 +65,7 @@ func init() {
 			e := validation.Error{
 				Key:     key,
 				Name:    "Time",
-				Field:   strings.Split(key, ".")[1],
+				Field:   strings.Split(key, ".")[0],
 				Value:   obj.(string),
 				Message: "必须是 15:04:05 格式的时间字符串",
 			}
@@ -82,7 +82,7 @@ func init() {
 			e := validation.Error{
 				Key:     key,
 				Name:    "DateTime",
-				Field:   strings.Split(key, ".")[1],
+				Field:   strings.Split(key, ".")[0],
 				Value:   obj.(string),
 				Message: "必须是 2006-01-02 15:04:05 格式的时间字符串",
 			}
@@ -102,7 +102,7 @@ func init() {
 			e := validation.Error{
 				Key:     key,
 				Name:    "Mail",
-				Field:   strings.Split(key, ".")[1],
+				Field:   strings.Split(key, ".")[0],
 				Value:   value,
 				Message: "必须是有效邮箱地址",
 			}
@@ -117,12 +117,12 @@ func init() {
 			return
 		}
 
-		ok, err := regexp.MatchString(`^[0-9]*$`, value)
+		ok, err := regexp.MatchString(`^-?[1-9][0-9]*\.?[0-9]*$`, value)
 		if !ok || err != nil {
 			e := validation.Error{
 				Key:     key,
 				Name:    "Num",
-				Field:   strings.Split(key, ".")[1],
+				Field:   strings.Split(key, ".")[0],
 				Value:   value,
 				Message: "必须是数字",
 			}
