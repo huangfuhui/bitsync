@@ -3,7 +3,7 @@ package member
 import (
 	"bitsync/controllers"
 	"bitsync/validator"
-	"bitsync/validator/account"
+	"bitsync/validator/member"
 	"bitsync/logic"
 	"bitsync/logic/Member"
 )
@@ -19,7 +19,7 @@ func (c *AccountController) Register() {
 	pin := c.GetString("pin")
 
 	v := validator.BaseValidator{}
-	ok := v.Validate(&c.BaseController, account.Register{
+	ok := v.Validate(&c.BaseController, member.Register{
 		handset,
 		password,
 		pin,
@@ -39,7 +39,7 @@ func (c *AccountController) RegisterPin() {
 	handset := c.GetString("handset")
 
 	v := validator.BaseValidator{}
-	ok := v.Validate(&c.BaseController, account.RegisterPIN{
+	ok := v.Validate(&c.BaseController, member.RegisterPIN{
 		handset,
 	})
 	if !ok {
@@ -58,7 +58,7 @@ func (c *AccountController) Login() {
 	password := c.GetString("password")
 
 	v := validator.BaseValidator{}
-	ok := v.Validate(&c.BaseController, account.Login{
+	ok := v.Validate(&c.BaseController, member.Login{
 		handset,
 		password,
 	})
@@ -78,7 +78,7 @@ func (c *AccountController) ModifyPassword() {
 	newPwd := c.GetString("newPwd")
 
 	v := validator.BaseValidator{}
-	ok := v.Validate(&c.BaseController, account.ModifyPassword{
+	ok := v.Validate(&c.BaseController, member.ModifyPassword{
 		oldPwd,
 		newPwd,
 	})
@@ -97,7 +97,7 @@ func (c *AccountController) PasswordPin() {
 	handset := c.GetString("handset")
 
 	v := validator.BaseValidator{}
-	ok := v.Validate(&c.BaseController, account.RegisterPIN{
+	ok := v.Validate(&c.BaseController, member.RegisterPIN{
 		handset,
 	})
 	if !ok {
@@ -116,7 +116,7 @@ func (c *AccountController) ResetPassword() {
 	pin := c.GetString("pin")
 
 	v := validator.BaseValidator{}
-	ok := v.Validate(&c.BaseController, account.ResetPassword{
+	ok := v.Validate(&c.BaseController, member.ResetPassword{
 		handset,
 		pin,
 	})

@@ -1,4 +1,4 @@
-package account
+package member
 
 type Register struct {
 	Handset  string `valid:"Required;Mobile"`

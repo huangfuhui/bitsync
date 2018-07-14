@@ -9,7 +9,7 @@ const (
 
 type TaskThresholdValue struct {
 	object.Base
-	UID            int `orm:"column(UID)"`
+	UID            int `orm:"column(uid)"`
 	CoinAId        int
 	CoinBId        int
 	SymbolPair     string

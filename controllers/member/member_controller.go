@@ -5,7 +5,7 @@ import (
 	"bitsync/logic"
 	"bitsync/logic/Member"
 	"bitsync/validator"
-	"bitsync/validator/account"
+	"bitsync/validator/member"
 )
 
 type MemberController struct {
@@ -28,7 +28,7 @@ func (c *MemberController) Update() {
 	birthday := c.GetString("birthday")
 
 	v := validator.BaseValidator{}
-	ok := v.Validate(&c.BaseController, account.Update{
+	ok := v.Validate(&c.BaseController, member.Update{
 		name,
 		email,
 		sex,

@@ -12,7 +12,7 @@ const (
 
 type Member struct {
 	object.Base
-	UID       int `orm:"column(UID)"`
+	UID       int `orm:"column(uid)"`
 	Name      string
 	Handset   string
 	Email     string
