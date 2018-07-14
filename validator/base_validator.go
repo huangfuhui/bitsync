@@ -92,18 +92,39 @@ func init() {
 
 	// 邮件校验
 	validation.AddCustomFunc("Mail", func(v *validation.Validation, obj interface{}, key string) {
-		if obj.(string) == "" {
+		value := obj.(string)
+		if value == "" {
 			return
 		}
 
-		ok, err := regexp.MatchString(`^[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`, obj.(string))
+		ok, err := regexp.MatchString(`^[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`, value)
 		if !ok || err != nil {
 			e := validation.Error{
 				Key:     key,
 				Name:    "Mail",
 				Field:   strings.Split(key, ".")[1],
-				Value:   obj.(string),
+				Value:   value,
 				Message: "必须是有效邮箱地址",
+			}
+			v.Errors = append(v.Errors, &e)
+		}
+	})
+
+	// 数字校验
+	validation.AddCustomFunc("Num", func(v *validation.Validation, obj interface{}, key string) {
+		value := obj.(string)
+		if value == "" {
+			return
+		}
+
+		ok, err := regexp.MatchString(`^[0-9]*$`, value)
+		if !ok || err != nil {
+			e := validation.Error{
+				Key:     key,
+				Name:    "Num",
+				Field:   strings.Split(key, ".")[1],
+				Value:   value,
+				Message: "必须是数字",
 			}
 			v.Errors = append(v.Errors, &e)
 		}
