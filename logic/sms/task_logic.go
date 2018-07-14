@@ -95,6 +95,28 @@ func (l *TaskLogic) List() {
 
 }
 
-func (l *TaskLogic) Cancel() {
+// 取消任务
+func (l *TaskLogic) Cancel(taskId int) {
+	UID := l.GetUID()
 
+	m := model.SmsTaskModel{}
+
+	// 判断任务状态
+	status, err := m.Status(UID, taskId)
+	if err != nil {
+		beego.Error(err)
+		l.Warn("取消任务失败")
+		return
+	} else if status != sms.STATUS_WAIT {
+		l.BadRequest("无法取消任务")
+		return
+	}
+
+	// 取消任务
+	err = m.Cancel(UID, taskId)
+	if err != nil {
+		beego.Error(err)
+		l.Warn("取消任务失败")
+		return
+	}
 }

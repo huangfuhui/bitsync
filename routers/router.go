@@ -93,6 +93,7 @@ func init() {
 		}),
 
 		beego.NSRouter("/add", &sms.TaskController{}, "post:Add"),
+		beego.NSRouter("/cancel", &sms.TaskController{}, "post:Cancel"),
 	)
 
 	beego.AddNamespace(wechatNs, smsNs, loginNs, accountNs, memberNs, comboNs, taskNs)

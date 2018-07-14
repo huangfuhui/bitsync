@@ -46,6 +46,20 @@ func (c *TaskController) List() {
 
 }
 
+// 取消任务
 func (c *TaskController) Cancel() {
+	taskId, _ := c.GetInt("task_id")
 
+	v := validator.BaseValidator{}
+	ok := v.Validate(&c.BaseController, sms.CancelTask{
+		taskId,
+	})
+	if !ok {
+		return
+	}
+
+	l := smsLogic.TaskLogic{logic.BaseLogic{c.BaseController}}
+	l.Cancel(taskId)
+
+	c.Output("")
 }

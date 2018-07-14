@@ -9,5 +9,5 @@ type AddTask struct {
 }
 
 type CancelTask struct {
-	TaskId int `valid:"Required;Numeric;Min(1)"`
+	TaskId int `valid:"Required;Min(1)"`
 }
