@@ -39,7 +39,7 @@ func (m *AccountModel) NewAccount(account, password, wechatOpeonid string) (UID 
 
 	query := `
 update account 
-set UID = ?
+set uid = ?
 where id = ?
 and account = ?
 `
