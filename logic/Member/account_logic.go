@@ -204,23 +204,38 @@ func (l *AccountLogic) PasswordPin(handset string) {
 }
 
 // 重置密码
-func (l *AccountLogic) ResetPassword(handset, pin string) (string, error) {
+func (l *AccountLogic) ResetPassword(handset, pin, newPwd string) {
 	// 校验验证码
 	sms := services.PinService{}
 	_, err := sms.Validate(services.PIN_RESET_PASSWORD, handset, pin)
 	if err != nil {
 		l.Warn(err.Error())
-		return "", err
+		return
 	}
 
-	random := util.Random{}
-	randomNum := random.Rand(100000, 999999)
+	// 校验新密码强度
+	match := false
+	match, _ = regexp.MatchString("^.{8,15}$", newPwd)
+	if !match {
+		l.BadRequest("密码长度必须是8-15个字符")
+		return
+	}
+	match, _ = regexp.MatchString("^.*[a-zA-Z].*$", newPwd)
+	if !match {
+		l.BadRequest("密码至少包含一个字母")
+		return
+	}
+	match, _ = regexp.MatchString("^.*[0-9].*$", newPwd)
+	if !match {
+		l.BadRequest("密码至少包含一个数字")
+		return
+	}
 
-	// 密码加密
-	salt := beego.AppConfig.String("salt")
+	// 新密码加密
 	w := md5.New()
-	io.WriteString(w, salt+"bs"+strconv.FormatInt(randomNum, 10))
-	newPwd := fmt.Sprintf("%x", w.Sum(nil))
+	salt := beego.AppConfig.String("salt")
+	io.WriteString(w, salt+newPwd)
+	newPwd = fmt.Sprintf("%x", w.Sum(nil))
 
 	// 修改密码
 	account := member.AccountModel{}
@@ -229,8 +244,6 @@ func (l *AccountLogic) ResetPassword(handset, pin string) (string, error) {
 		beego.Error(err)
 
 		l.Warn("重置密码失败")
-		return "", err
+		return
 	}
-
-	return "bs" + strconv.FormatInt(randomNum, 10), nil
 }

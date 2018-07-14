@@ -74,8 +74,8 @@ func (c *AccountController) Login() {
 
 // 修改密码
 func (c *AccountController) ModifyPassword() {
-	oldPwd := c.GetString("oldPwd")
-	newPwd := c.GetString("newPwd")
+	oldPwd := c.GetString("old_pwd")
+	newPwd := c.GetString("new_pwd")
 
 	v := validator.BaseValidator{}
 	ok := v.Validate(&c.BaseController, member.ModifyPassword{
@@ -114,18 +114,20 @@ func (c *AccountController) PasswordPin() {
 func (c *AccountController) ResetPassword() {
 	handset := c.GetString("handset")
 	pin := c.GetString("pin")
+	newPwd := c.GetString("new_pwd")
 
 	v := validator.BaseValidator{}
 	ok := v.Validate(&c.BaseController, member.ResetPassword{
 		handset,
 		pin,
+		newPwd,
 	})
 	if !ok {
 		return
 	}
 
 	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
-	newPwd, _ := l.ResetPassword(handset, pin)
+	l.ResetPassword(handset, pin, newPwd)
 
-	c.Output(map[string]string{"new_password": newPwd})
+	c.Output("")
 }

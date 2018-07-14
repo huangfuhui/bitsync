@@ -50,6 +50,8 @@ func init() {
 		beego.NSRouter("/register", &member.AccountController{}, "post:Register"),
 		beego.NSRouter("/registerPin", &member.AccountController{}, "post:RegisterPin"),
 		beego.NSRouter("/login", &member.AccountController{}, "post:Login"),
+		beego.NSRouter("/passwordPin", &member.AccountController{}, "post:PasswordPin"),
+		beego.NSRouter("/resetPassword", &member.AccountController{}, "post:ResetPassword"),
 	)
 
 	// 账号管理
@@ -60,8 +62,6 @@ func init() {
 		}),
 
 		beego.NSRouter("/modifyPassword", &member.AccountController{}, "post:ModifyPassword"),
-		beego.NSRouter("/passwordPin", &member.AccountController{}, "post:PasswordPin"),
-		beego.NSRouter("/resetPassword", &member.AccountController{}, "post:ResetPassword"),
 	)
 
 	// 用户管理

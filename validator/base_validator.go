@@ -96,7 +96,7 @@ func init() {
 			return
 		}
 
-		ok, err := regexp.Match(`^[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`, []byte(obj.(string)))
+		ok, err := regexp.MatchString(`^[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`, obj.(string))
 		if !ok || err != nil {
 			e := validation.Error{
 				Key:     key,
