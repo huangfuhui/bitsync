@@ -6,6 +6,7 @@ import (
 	"bitsync/controllers"
 	"time"
 	"strings"
+	"regexp"
 )
 
 type BaseValidator struct {
@@ -27,17 +28,21 @@ func init() {
 		"Match":        "必须匹配正则%s",
 		"NoMatch":      "必须不匹配%s",
 		"AlphaDash":    "必须是字符或数字或横杠或下划线",
-		"Email":        "必须是邮箱地址",
+		"Email":        "必须是有效的邮箱地址",
 		"IP":           "必须是IP地址",
 		"Base64":       "必须是base64编码",
-		"Mobile":       "必须是手机号码",
-		"Tel":          "必须是座机号码",
-		"Phone":        "必须是座机或者手机号码",
-		"ZipCode":      "必须是邮政编码",
+		"Mobile":       "必须是有效的手机号码",
+		"Tel":          "必须是有效的座机号码",
+		"Phone":        "必须是有效的座机或者手机号码",
+		"ZipCode":      "必须是有效的邮政编码",
 	})
 
 	// 日期与时间校验
 	validation.AddCustomFunc("Date", func(v *validation.Validation, obj interface{}, key string) {
+		if obj.(string) == "" {
+			return
+		}
+
 		_, err := time.Parse("2006-01-02", obj.(string))
 		if err != nil {
 			e := validation.Error{
@@ -51,6 +56,10 @@ func init() {
 		}
 	})
 	validation.AddCustomFunc("Time", func(v *validation.Validation, obj interface{}, key string) {
+		if obj.(string) == "" {
+			return
+		}
+
 		_, err := time.Parse("15:04:05", obj.(string))
 		if err != nil {
 			e := validation.Error{
@@ -64,6 +73,10 @@ func init() {
 		}
 	})
 	validation.AddCustomFunc("DateTime", func(v *validation.Validation, obj interface{}, key string) {
+		if obj.(string) == "" {
+			return
+		}
+
 		_, err := time.Parse("2006-01-02 15:04:05", obj.(string))
 		if err != nil {
 			e := validation.Error{
@@ -72,6 +85,25 @@ func init() {
 				Field:   strings.Split(key, ".")[1],
 				Value:   obj.(string),
 				Message: "必须是 2006-01-02 15:04:05 格式的时间字符串",
+			}
+			v.Errors = append(v.Errors, &e)
+		}
+	})
+
+	// 邮件校验
+	validation.AddCustomFunc("Mail", func(v *validation.Validation, obj interface{}, key string) {
+		if obj.(string) == "" {
+			return
+		}
+
+		ok, err := regexp.Match(`^[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`+"`"+`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z0-9](?:[\w-]*[\w])?$`, []byte(obj.(string)))
+		if !ok || err != nil {
+			e := validation.Error{
+				Key:     key,
+				Name:    "Mail",
+				Field:   strings.Split(key, ".")[1],
+				Value:   obj.(string),
+				Message: "必须是有效邮箱地址",
 			}
 			v.Errors = append(v.Errors, &e)
 		}

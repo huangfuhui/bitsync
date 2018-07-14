@@ -42,20 +42,26 @@ func (l *MemberLogic) Get() map[string]string {
 func (l *MemberLogic) Update(name, email string, sex int, birthday string) {
 	UID := l.GetUID()
 
-	birth, err := time.Parse("2006-01-02", birthday)
-	if err != nil {
-		beego.Error(err)
-		l.Warn("更新失败")
-		return
+	params := orm.Params{
+		"Name":  name,
+		"Email": email,
+		"Sex":   sex,
+	}
+
+	if birthday != "" {
+		birth, err := time.Parse("2006-01-02", birthday)
+		if err != nil {
+			beego.Error(err)
+			l.Warn("更新失败")
+			return
+		}
+		params["Birthday"] = birth
+	} else {
+		params["Birthday"] = time.Now().Format("2006-01-02")
 	}
 
 	m := member.MemberModel{}
-	err = m.Update(UID, orm.Params{
-		"Name":     name,
-		"Email":    email,
-		"Sex":      sex,
-		"Birthday": birth,
-	})
+	err := m.Update(UID, params)
 	if err != nil {
 		beego.Error(err)
 		l.Warn("更新失败")
