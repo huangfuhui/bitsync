@@ -31,13 +31,14 @@ func init() {
 		beego.NSRouter("/auth", &wechat.IndexController{}, "get:Auth;post:Dispatch"),
 	)
 
+	// 短信
 	smsNs := beego.NewNamespace("/sms",
 		beego.NSBefore(func(ctx *context.Context) {
 			m := middleware.Base{ctx}
-			m.Auth()
+			m.Auth(middleware.Auth{})
 		}),
 
-		beego.NSRouter("/index", &sms.IndexController{}, "get:Index"),
+		beego.NSRouter("/wallet", &sms.IndexController{}, "get:Wallet"),
 	)
 
 	// 注册登录
