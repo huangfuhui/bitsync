@@ -42,8 +42,12 @@ func (c *TaskController) Get() {
 
 }
 
+// 获取任务列表
 func (c *TaskController) List() {
+	l := smsLogic.TaskLogic{logic.BaseLogic{c.BaseController}}
+	res := l.List()
 
+	c.Output(res)
 }
 
 // 取消任务

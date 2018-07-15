@@ -10,6 +10,7 @@ import (
 	"strconv"
 	model "bitsync/models/sms"
 	coinObj "bitsync/object/coin"
+	"github.com/astaxie/beego/orm"
 )
 
 type TaskLogic struct {
@@ -33,7 +34,7 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 	if exchangeId == coinObj.EXCHANGE_HUOBI {
 		key = "huobi:" + coinA.Name + "usdt"
 	} else if exchangeId == coinObj.EXCHANGE_DRAGEONEX {
-		key = "dragonex:" + coinB.Name + "usdt"
+		key = "dragonex:" + coinA.Name + "usdt"
 	}
 
 	// 查询当前价格
@@ -91,8 +92,19 @@ func (l *TaskLogic) Get() {
 
 }
 
-func (l *TaskLogic) List() {
+// 查询任务列表
+func (l *TaskLogic) List() []orm.Params {
+	UID := l.GetUID()
 
+	m := model.SmsTaskModel{}
+	res, err := m.GetList(UID)
+	if err != nil {
+		beego.Error(err)
+		l.Warn("查询失败")
+		return res
+	}
+
+	return res
 }
 
 // 取消任务
