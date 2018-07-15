@@ -88,8 +88,28 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 	}
 }
 
-func (l *TaskLogic) Get() {
+// 查询某一交易对任务列表
+func (l *TaskLogic) Get(types, exchangeId int, symbolPair string) []orm.Params {
+	UID := l.GetUID()
 
+	symbolPairSli := strings.Split(symbolPair, "_")
+	coinModel := coin.CoinModel{}
+	coinA, _ := coinModel.GetByName(symbolPairSli[0])
+	coinB, _ := coinModel.GetByName(symbolPairSli[1])
+	if coinA.Id == 0 || coinB.Id == 0 {
+		l.BadRequest("交易对不存在")
+		return []orm.Params{}
+	}
+
+	m := model.SmsTaskModel{}
+	res, err := m.Get(UID, types, exchangeId, symbolPair)
+	if err != nil {
+		beego.Error(err)
+		l.Warn("查询失败")
+		return res
+	}
+
+	return res
 }
 
 // 查询任务列表

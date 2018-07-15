@@ -13,7 +13,7 @@ type SmsTaskModel struct {
 // 查询任务列表
 func (m *SmsTaskModel) GetList(UID int) ([]orm.Params, error) {
 	query := `
-select a.type, c.name_cn name, b.symbol_pair, count(distinct a.id) task_quantity
+select a.type, c.exchange_id, c.name_cn exchange_name, b.symbol_pair, count(distinct a.id) task_quantity
 from sms_task a
 join task_threshold_value b
 on a.task_id = b.id
@@ -35,8 +35,26 @@ group by b.exchange_id, b.symbol_pair
 }
 
 // 查询某个任务
-func (m *SmsTaskModel) Get(UID, taskId int) () {
+func (m *SmsTaskModel) Get(UID, types, exchangeId int, symbolPair string) ([]orm.Params, error) {
+	query := `
+select a.id, a.type, b.deviation, b.threshold_value
+from sms_task a
+join task_threshold_value b
+on a.task_id = b.id
+and a.type = ?
+and a.status = 0
+where a.uid = ? 
+and b.exchange_id = ?
+and b.symbol_pair = ?
+`
 
+	var res []orm.Params
+	_, err := orm.NewOrm().Raw(query, types, UID, exchangeId, symbolPair).Values(&res)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
 }
 
 // 查询任务状态

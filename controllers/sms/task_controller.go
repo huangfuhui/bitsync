@@ -38,8 +38,26 @@ func (c *TaskController) Add() {
 	c.Output("")
 }
 
+// 获取某一交易对任务
 func (c *TaskController) Get() {
+	types, _ := c.GetInt("type")
+	exchangeId, _ := c.GetInt("exchange_id")
+	symbolPair := c.GetString("symbol_pair")
 
+	v := validator.BaseValidator{}
+	ok := v.Validate(&c.BaseController, sms.GetTask{
+		types,
+		exchangeId,
+		symbolPair,
+	})
+	if !ok {
+		return
+	}
+
+	l := smsLogic.TaskLogic{logic.BaseLogic{c.BaseController}}
+	res := l.Get(types, exchangeId, symbolPair)
+
+	c.Output(res)
 }
 
 // 获取任务列表

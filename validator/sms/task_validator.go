@@ -11,3 +11,9 @@ type AddTask struct {
 type CancelTask struct {
 	TaskId int `valid:"Required;Min(1)"`
 }
+
+type GetTask struct {
+	Type       int    `valid:"Required;Range(1,1)"`
+	ExchangeId int    `valid:"Required;Range(1,2)"`
+	SymbolPair string `valid:"Required;AlphaDash"`
+}
