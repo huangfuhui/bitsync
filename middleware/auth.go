@@ -13,7 +13,7 @@ type Auth struct {
 
 // 校验token有效性
 func (auth *Auth) Verify() bool {
-	token := auth.Request.Header.Get("token")
+	token := auth.Request.Header.Get("Token")
 	if token == "" {
 		return false
 	}

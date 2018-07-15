@@ -21,7 +21,7 @@ type BaseController struct {
 
 // 获取当前登录用户的UID
 func (c *BaseController) GetUID() (UID int) {
-	token := c.Ctx.Request.Header.Get("token")
+	token := c.Ctx.Request.Header.Get("Token")
 	if token == "" {
 		return 0
 	}
@@ -61,7 +61,7 @@ func (c *BaseController) GetUID() (UID int) {
 
 // 获取当前登录用户的账号
 func (c *BaseController) GetAccount() (handset string) {
-	token := c.Ctx.Request.Header.Get("token")
+	token := c.Ctx.Request.Header.Get("Token")
 	if token == "" {
 		return ""
 	}
