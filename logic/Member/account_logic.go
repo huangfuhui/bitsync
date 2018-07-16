@@ -247,3 +247,19 @@ func (l *AccountLogic) ResetPassword(handset, pin, newPwd string) {
 		return
 	}
 }
+
+// 退出登录
+func (l *AccountLogic) Logout() {
+	handset := l.GetAccount()
+
+	db, _ := beego.AppConfig.Int("redis_db_token")
+	redis := util.Cli{}
+	redis.Select(db)
+	key := "token:" + handset
+	err := redis.Del(key)
+	if err != nil {
+		beego.Error(err)
+		l.Warn("退出登录失败")
+		return
+	}
+}

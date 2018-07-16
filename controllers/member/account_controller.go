@@ -131,3 +131,11 @@ func (c *AccountController) ResetPassword() {
 
 	c.Output("")
 }
+
+// 退出登录
+func (c *AccountController) Logout() {
+	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l.Logout()
+
+	c.Output("")
+}

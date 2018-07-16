@@ -62,6 +62,7 @@ func init() {
 			m.Auth(middleware.Auth{})
 		}),
 
+		beego.NSRouter("/logout", &member.AccountController{}, "get:Logout"),
 		beego.NSRouter("/modifyPassword", &member.AccountController{}, "post:ModifyPassword"),
 	)
 
