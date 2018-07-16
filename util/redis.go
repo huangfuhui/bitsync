@@ -89,6 +89,14 @@ type Cli struct {
 	Ex int
 }
 
+func (cli *Cli) Del(key string) error {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	_, err := con.Do("del", key)
+	defer con.Close()
+	return err
+}
+
 func (cli *Cli) Get(key string) (string, error) {
 	dbNum := redis.DialDatabase(cli.DB)
 	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
