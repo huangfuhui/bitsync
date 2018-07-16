@@ -31,16 +31,6 @@ func init() {
 		beego.NSRouter("/auth", &wechat.IndexController{}, "get:Auth;post:Dispatch"),
 	)
 
-	// 短信
-	smsNs := beego.NewNamespace("/sms",
-		beego.NSBefore(func(ctx *context.Context) {
-			m := middleware.Base{ctx}
-			m.Auth(middleware.Auth{})
-		}),
-
-		beego.NSRouter("/wallet", &sms.IndexController{}, "get:Wallet"),
-	)
-
 	// 注册登录
 	loginNs := beego.NewNamespace("/account",
 		beego.NSBefore(func(ctx *context.Context) {
@@ -75,6 +65,16 @@ func init() {
 
 		beego.NSRouter("/get", &member.MemberController{}, "get:Get"),
 		beego.NSRouter("/update", &member.MemberController{}, "post:Update"),
+	)
+
+	// 短信
+	smsNs := beego.NewNamespace("/sms",
+		beego.NSBefore(func(ctx *context.Context) {
+			m := middleware.Base{ctx}
+			m.Auth(middleware.Auth{})
+		}),
+
+		beego.NSRouter("/wallet", &sms.IndexController{}, "get:Wallet"),
 	)
 
 	// 短信套餐

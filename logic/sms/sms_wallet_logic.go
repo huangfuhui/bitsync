@@ -42,6 +42,6 @@ func (l *SmsWalletLogic) Get() orm.Params {
 		"balance":              wallet.Balance,
 		"prepare_consume":      wallet.PrepareConsume,
 		"today_consume":        today,
-		"current_mont_consume": currentMonth,
+		"current_month_consume": currentMonth,
 	}
 }
