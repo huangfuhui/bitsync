@@ -12,17 +12,18 @@ type Base struct {
 
 // 执行中间件
 func (base *Base) Auth(middlewares ...interface{}) {
+	responseData := new(controllers.Response)
 	for _, middleware := range middlewares {
 		res := true
 		switch middleware.(type) {
 		case Auth:
 			auth := Auth{base}
 			res = auth.Verify()
+
+			responseData.Code = -400
 		}
 
 		if !res {
-			responseData := new(controllers.Response)
-			responseData.Code = http.StatusBadRequest
 			responseData.Response = ""
 			responseData.Msg = "请求错误"
 
