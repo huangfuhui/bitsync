@@ -54,41 +54,38 @@ func market(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		go func() {
-			market := Market{
-				Code: http.StatusOK,
-				Msg:  "",
-			}
+		market := Market{
+			Code: http.StatusOK,
+			Msg:  "",
+		}
 
-			for _, v := range huobiUsdt {
-				key := "huobi:" + v + "usdt"
-				redisCon := util.Redis.Con()
-				priceStr, _ := util.Redis.Get(redisCon, key)
-				price, _ := strconv.ParseFloat(priceStr, 64)
-				market.Response = append(market.Response, SymbolPair{
-					ExchangeId: 1,
-					Symbol:     v + "/usdt",
-					Price:      price,
-				})
-			}
-			for _, v := range dragonexUsdt {
-				key := "dragonex:" + v + "usdt"
-				redisCon := util.Redis.Con()
-				priceStr, _ := util.Redis.Get(redisCon, key)
-				price, _ := strconv.ParseFloat(priceStr, 64)
-				market.Response = append(market.Response, SymbolPair{
-					ExchangeId: 2,
-					Symbol:     v + "/usdt",
-					Price:      price,
-				})
-			}
+		for _, v := range huobiUsdt {
+			key := "huobi:" + v + "usdt"
+			redisCon := util.Redis.Con()
+			priceStr, _ := util.Redis.Get(redisCon, key)
+			price, _ := strconv.ParseFloat(priceStr, 64)
+			market.Response = append(market.Response, SymbolPair{
+				ExchangeId: 1,
+				Symbol:     v + "/usdt",
+				Price:      price,
+			})
+		}
+		for _, v := range dragonexUsdt {
+			key := "dragonex:" + v + "usdt"
+			redisCon := util.Redis.Con()
+			priceStr, _ := util.Redis.Get(redisCon, key)
+			price, _ := strconv.ParseFloat(priceStr, 64)
+			market.Response = append(market.Response, SymbolPair{
+				ExchangeId: 2,
+				Symbol:     v + "/usdt",
+				Price:      price,
+			})
+		}
 
-			err = con.WriteJSON(market)
-			if err != nil {
-				beego.Warn("[行情服务]write:", err)
-			}
-		}()
-
+		err = con.WriteJSON(market)
+		if err != nil {
+			beego.Warn("[行情服务]write:", err)
+		}
 	}
 }
 
@@ -120,57 +117,54 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		go func() {
-			market := Market{
-				Code: http.StatusBadRequest,
-				Msg:  "交易对不存在",
-			}
+		market := Market{
+			Code: http.StatusBadRequest,
+			Msg:  "交易对不存在",
+		}
 
-			symbolPair := strings.Replace(symbol.Symbol, "_", "/", -1)
-			if symbol.ExchangeId == 1 {
-				for _, v := range huobiUsdt {
-					if v+"/usdt" == symbolPair {
-						key := "huobi:" + symbolPair
-						redisCon := util.Redis.Con()
-						priceStr, _ := util.Redis.Get(redisCon, key)
-						price, _ := strconv.ParseFloat(priceStr, 64)
+		symbolPair := strings.Replace(symbol.Symbol, "_", "/", -1)
+		if symbol.ExchangeId == 1 {
+			for _, v := range huobiUsdt {
+				if v+"/usdt" == symbolPair {
+					key := "huobi:" + symbolPair
+					redisCon := util.Redis.Con()
+					priceStr, _ := util.Redis.Get(redisCon, key)
+					price, _ := strconv.ParseFloat(priceStr, 64)
 
-						market.Code = http.StatusOK
-						market.Response = append(market.Response, SymbolPair{
-							ExchangeId: 1,
-							Symbol:     symbolPair,
-							Price:      price,
-						})
-						market.Msg = ""
-					}
+					market.Code = http.StatusOK
+					market.Response = append(market.Response, SymbolPair{
+						ExchangeId: 1,
+						Symbol:     symbolPair,
+						Price:      price,
+					})
+					market.Msg = ""
 				}
-			} else if symbol.ExchangeId == 2 {
-				for _, v := range dragonexUsdt {
-					if v+"/usdt" == symbolPair {
-						key := "dragonex:" + symbolPair
-						redisCon := util.Redis.Con()
-						priceStr, _ := util.Redis.Get(redisCon, key)
-						price, _ := strconv.ParseFloat(priceStr, 64)
+			}
+		} else if symbol.ExchangeId == 2 {
+			for _, v := range dragonexUsdt {
+				if v+"/usdt" == symbolPair {
+					key := "dragonex:" + symbolPair
+					redisCon := util.Redis.Con()
+					priceStr, _ := util.Redis.Get(redisCon, key)
+					price, _ := strconv.ParseFloat(priceStr, 64)
 
-						market.Code = http.StatusOK
-						market.Response = append(market.Response, SymbolPair{
-							ExchangeId: 2,
-							Symbol:     symbolPair,
-							Price:      price,
-						})
-						market.Msg = ""
-					}
+					market.Code = http.StatusOK
+					market.Response = append(market.Response, SymbolPair{
+						ExchangeId: 2,
+						Symbol:     symbolPair,
+						Price:      price,
+					})
+					market.Msg = ""
 				}
-			} else {
-				market.Msg = "交易所ID非法"
 			}
+		} else {
+			market.Msg = "交易所ID非法"
+		}
 
-			err = con.WriteJSON(market)
-			if err != nil {
-				beego.Warn("[行情服务]write:", err)
-			}
-		}()
-
+		err = con.WriteJSON(market)
+		if err != nil {
+			beego.Warn("[行情服务]write:", err)
+		}
 	}
 }
 
