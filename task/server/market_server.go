@@ -111,10 +111,10 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 
 	for {
 		symbol := SymbolRequest{}
-		err := con.ReadJSON(&symbol)
+		err = con.ReadJSON(&symbol)
 		if err != nil {
 			beego.Warn("[行情服务]read:", err)
-			break
+			return
 		}
 
 		market := Market{
@@ -122,11 +122,12 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 			Msg:  "交易对不存在",
 		}
 
-		symbolPair := strings.Replace(symbol.Symbol, "_", "/", -1)
+		symbolPairKey := strings.Replace(symbol.Symbol, "/", "", -1)
+
 		if symbol.ExchangeId == 1 {
 			for _, v := range huobiUsdt {
-				if v+"/usdt" == symbolPair {
-					key := "huobi:" + symbolPair
+				if v+"/usdt" == symbol.Symbol {
+					key := "huobi:" + symbolPairKey
 					redisCon := util.Redis.Con()
 					priceStr, _ := util.Redis.Get(redisCon, key)
 					price, _ := strconv.ParseFloat(priceStr, 64)
@@ -134,7 +135,7 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 					market.Code = http.StatusOK
 					market.Response = append(market.Response, SymbolPair{
 						ExchangeId: 1,
-						Symbol:     symbolPair,
+						Symbol:     symbol.Symbol,
 						Price:      price,
 					})
 					market.Msg = ""
@@ -142,8 +143,8 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 			}
 		} else if symbol.ExchangeId == 2 {
 			for _, v := range dragonexUsdt {
-				if v+"/usdt" == symbolPair {
-					key := "dragonex:" + symbolPair
+				if v+"/usdt" == symbol.Symbol {
+					key := "dragonex:" + symbolPairKey
 					redisCon := util.Redis.Con()
 					priceStr, _ := util.Redis.Get(redisCon, key)
 					price, _ := strconv.ParseFloat(priceStr, 64)
@@ -151,7 +152,7 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 					market.Code = http.StatusOK
 					market.Response = append(market.Response, SymbolPair{
 						ExchangeId: 2,
-						Symbol:     symbolPair,
+						Symbol:     symbol.Symbol,
 						Price:      price,
 					})
 					market.Msg = ""
