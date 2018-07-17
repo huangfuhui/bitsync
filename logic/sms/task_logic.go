@@ -18,7 +18,7 @@ type TaskLogic struct {
 }
 
 // 添加预警任务
-func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation int, value string) (taskId int) {
+func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation int, value string) orm.Params {
 	UID := l.GetUID()
 
 	symbolPairSli := strings.Split(symbolPair, "_")
@@ -27,7 +27,7 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 	coinB, _ := coinModel.GetByName(symbolPairSli[1])
 	if coinA.Id == 0 || coinB.Id == 0 {
 		l.BadRequest("交易对不存在")
-		return
+		return orm.Params{}
 	}
 
 	key := ""
@@ -49,10 +49,10 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 		// 判断任务阈值有效性
 		if deviation == sms.DEVIATION_GT && taskValue <= currentPrice {
 			l.BadRequest("价格不能小于等于当前价格")
-			return
+			return orm.Params{}
 		} else if deviation == sms.DEVIATION_LT && taskValue >= currentPrice {
 			l.BadRequest("价格不能大于等于当前价格")
-			return
+			return orm.Params{}
 		}
 
 	}
@@ -62,11 +62,11 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 	if err != nil {
 		beego.Error(err)
 		l.Warn("添加预警失败")
-		return
+		return orm.Params{}
 	}
 	if balance <= 0 {
 		l.Warn("短信钱包余额不足")
-		return
+		return orm.Params{}
 	}
 
 	task := sms.TaskThresholdValue{
@@ -84,10 +84,10 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 	if err != nil {
 		beego.Error(err)
 		l.Warn("添加预警失败")
-		return
+		return orm.Params{}
 	}
 
-	return task.Id
+	return orm.Params{"task_id": task.Id}
 }
 
 // 查询某一交易对任务列表
