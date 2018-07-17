@@ -3,7 +3,7 @@ package member
 import (
 	"bitsync/controllers"
 	"bitsync/logic"
-	"bitsync/logic/Member"
+	memberLogic "bitsync/logic/member"
 	"bitsync/validator"
 	"bitsync/validator/member"
 )
@@ -14,7 +14,7 @@ type MemberController struct {
 
 // 获取会员信息
 func (c *MemberController) Get() {
-	l := Member.MemberLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.MemberLogic{logic.BaseLogic{c.BaseController}}
 	res := l.Get()
 
 	c.Output(res)
@@ -38,7 +38,7 @@ func (c *MemberController) Update() {
 		return
 	}
 
-	l := Member.MemberLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.MemberLogic{logic.BaseLogic{c.BaseController}}
 	l.Update(name, email, sex, birthday)
 
 	c.Output("")

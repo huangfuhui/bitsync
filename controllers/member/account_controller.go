@@ -5,7 +5,7 @@ import (
 	"bitsync/validator"
 	"bitsync/validator/member"
 	"bitsync/logic"
-	"bitsync/logic/Member"
+	memberLogic "bitsync/logic/member"
 )
 
 type AccountController struct {
@@ -28,7 +28,7 @@ func (c *AccountController) Register() {
 		return
 	}
 
-	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	res := l.Register(handset, password, pin)
 
 	c.Output(res)
@@ -46,7 +46,7 @@ func (c *AccountController) RegisterPin() {
 		return
 	}
 
-	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	l.RegisterPin(handset)
 
 	c.Output("")
@@ -66,7 +66,7 @@ func (c *AccountController) Login() {
 		return
 	}
 
-	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	res := l.Login(handset, password)
 
 	c.Output(res)
@@ -86,7 +86,7 @@ func (c *AccountController) ModifyPassword() {
 		return
 	}
 
-	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	l.ModifyPassword(oldPwd, newPwd)
 
 	c.Output("")
@@ -104,7 +104,7 @@ func (c *AccountController) PasswordPin() {
 		return
 	}
 
-	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	l.PasswordPin(handset)
 
 	c.Output("")
@@ -126,7 +126,7 @@ func (c *AccountController) ResetPassword() {
 		return
 	}
 
-	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	l.ResetPassword(handset, pin, newPwd)
 
 	c.Output("")
@@ -134,7 +134,7 @@ func (c *AccountController) ResetPassword() {
 
 // 退出登录
 func (c *AccountController) Logout() {
-	l := Member.AccountLogic{logic.BaseLogic{c.BaseController}}
+	l := memberLogic.AccountLogic{logic.BaseLogic{c.BaseController}}
 	l.Logout()
 
 	c.Output("")

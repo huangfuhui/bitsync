@@ -1,4 +1,4 @@
-package Member
+package member
 
 import (
 	"bitsync/logic"
