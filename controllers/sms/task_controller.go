@@ -33,9 +33,9 @@ func (c *TaskController) Add() {
 	}
 
 	l := smsLogic.TaskLogic{logic.BaseLogic{c.BaseController}}
-	l.Add(types, exchangeId, symbolPair, deviation, value)
+	res := l.Add(types, exchangeId, symbolPair, deviation, value)
 
-	c.Output("")
+	c.Output(res)
 }
 
 // 获取某一交易对任务

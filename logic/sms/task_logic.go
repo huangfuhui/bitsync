@@ -18,7 +18,7 @@ type TaskLogic struct {
 }
 
 // 添加预警任务
-func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation int, value string) {
+func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation int, value string) (taskId int) {
 	UID := l.GetUID()
 
 	symbolPairSli := strings.Split(symbolPair, "_")
@@ -86,6 +86,8 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 		l.Warn("添加预警失败")
 		return
 	}
+
+	return task.Id
 }
 
 // 查询某一交易对任务列表
