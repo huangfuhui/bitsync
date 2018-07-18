@@ -121,7 +121,7 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 
 	eosPrice, _ := strconv.ParseFloat(dragonexEos, 64)
 	eosCny := strconv.FormatFloat(eosPrice*6.5, 'f', 4, 64)
-	buffer.WriteString("btc/usdt " + dragonexEos + "$ (≈" + eosCny + "￥)\n")
+	buffer.WriteString("eos/usdt " + dragonexEos + "$ (≈" + eosCny + "￥)\n")
 
 	dtPrice, _ := strconv.ParseFloat(dragonexDt, 64)
 	dtCny := strconv.FormatFloat(dtPrice*6.5, 'f', 4, 64)
