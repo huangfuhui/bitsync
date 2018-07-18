@@ -7,9 +7,12 @@ type PriceWatchTask struct {
 
 // 启动价格监控
 func (t *PriceWatchTask) Watch() {
-	huobi := services.HuobiService{}
-	go huobi.WatchHuobi()
+	// huobi := services.HuobiService{}
+	// go huobi.WatchHuobi()
+	//
+	// dragonex := services.DragonexService{}
+	// go dragonex.WatchDragonex()
 
-	dragonex := services.DragonexService{}
-	go dragonex.WatchDragonex()
+	okex := services.OkexService{}
+	go okex.WatchOkex()
 }
