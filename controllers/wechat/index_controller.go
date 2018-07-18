@@ -5,7 +5,6 @@ import (
 	"bitsync/util"
 	"github.com/astaxie/beego"
 	"bytes"
-	"strings"
 	"strconv"
 )
 
@@ -108,30 +107,29 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 		return ""
 	}
 
-	symbolSeparator := beego.AppConfig.String("watch::symbol_separator")
-	parisSeparator := beego.AppConfig.String("watch::paris_separator")
-
 	// TODO:消息排重
 	huobiBtc, _ := util.Redis.Get(util.Redis.Con(), "huobi:btcusdt")
 	huobiEth, _ := util.Redis.Get(util.Redis.Con(), "huobi:ethusdt")
 	huobiEos, _ := util.Redis.Get(util.Redis.Con(), "huobi:eosusdt")
-
-	dragonexSymbol := beego.AppConfig.String("dragonex::price_pairs");
-	dragonexSymbolSli := strings.Split(dragonexSymbol, parisSeparator)
+	dragonexEos, _ := util.Redis.Get(util.Redis.Con(), "dragonex:eosusdt")
+	dragonexDt, _ := util.Redis.Get(util.Redis.Con(), "dragonex:ethusdt")
+	dragonexCht, _ := util.Redis.Get(util.Redis.Con(), "dragonex:chtusdt")
 
 	buffer := bytes.Buffer{}
 	buffer.WriteString("【火币】\nbtc/usdt " + huobiBtc + "$\neth/usdt " + huobiEth + "$\neos/usdt " + huobiEos + "$\n")
 	buffer.WriteString("【龙交所】\n")
 
-	for _, v := range dragonexSymbolSli {
-		priceKey := strings.Replace(v, symbolSeparator, "", -1)
-		symbol := strings.Replace(v, symbolSeparator, "/", -1)
-		price, _ := util.Redis.Get(util.Redis.Con(), "dragonex:"+priceKey)
+	eosPrice, _ := strconv.ParseFloat(dragonexEos, 64)
+	eosCny := strconv.FormatFloat(eosPrice*6.5, 'f', 4, 64)
+	buffer.WriteString("btc/usdt " + dragonexEos + "$ (≈" + eosCny + "￥)\n")
 
-		numericPrice, _ := strconv.ParseFloat(price, 64)
-		cny := strconv.FormatFloat(numericPrice*6.5, 'f', 4, 64)
-		buffer.WriteString(symbol + " " + price + "$ (≈" + cny + "￥)\n")
-	}
+	dtPrice, _ := strconv.ParseFloat(dragonexDt, 64)
+	dtCny := strconv.FormatFloat(dtPrice*6.5, 'f', 4, 64)
+	buffer.WriteString("dt/usdt " + dragonexDt + "$ (≈" + dtCny + "￥)\n")
+
+	chtPrice, _ := strconv.ParseFloat(dragonexCht, 64)
+	chtCny := strconv.FormatFloat(chtPrice*6.5, 'f', 4, 64)
+	buffer.WriteString("cht/usdt " + dragonexCht + "$ (≈" + chtCny + "￥)\n")
 
 	// 拼接回复信息
 	replay, err := util.ReplayTextMsg(res.BaseData.FromUserName, buffer.String())
