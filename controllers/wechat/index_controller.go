@@ -112,7 +112,7 @@ func (c *IndexController) autoReply(xmlBody []byte) string {
 	huobiEth, _ := util.Redis.Get(util.Redis.Con(), "huobi:ethusdt")
 	huobiEos, _ := util.Redis.Get(util.Redis.Con(), "huobi:eosusdt")
 	dragonexEos, _ := util.Redis.Get(util.Redis.Con(), "dragonex:eosusdt")
-	dragonexDt, _ := util.Redis.Get(util.Redis.Con(), "dragonex:ethusdt")
+	dragonexDt, _ := util.Redis.Get(util.Redis.Con(), "dragonex:dtusdt")
 	dragonexCht, _ := util.Redis.Get(util.Redis.Con(), "dragonex:chtusdt")
 
 	buffer := bytes.Buffer{}
