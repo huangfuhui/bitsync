@@ -72,7 +72,7 @@ func (service *PinService) Send(businessCode, handset string) (string, error) {
 	sms := SmsService{}
 	random := util.Random{}
 	pin := strconv.FormatInt(random.Rand(1000, 9999), 10)
-	tplId, _ := beego.AppConfig.Int64("sms:tpl_verify_code")
+	tplId, _ := beego.AppConfig.Int64("sms::tpl_verify_code")
 	err := sms.SendSingle("86", handset, []string{pin}, tplId)
 	if err != nil {
 		beego.Error(err)
