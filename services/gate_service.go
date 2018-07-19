@@ -2,7 +2,6 @@ package services
 
 import (
 	"github.com/astaxie/beego"
-	"flag"
 	"net/url"
 	"github.com/gorilla/websocket"
 	"strings"
@@ -20,9 +19,7 @@ func (service *GateService) WatchGate() {
 	gateUrl := beego.AppConfig.String("gate::ws_url")
 	gatePath := beego.AppConfig.String("gate::ws_path")
 
-	addr := flag.String("addr", gateUrl, "http service address")
-	flag.Parse()
-	conUrl := url.URL{Scheme: gateScheme, Host: *addr, Path: gatePath}
+	conUrl := url.URL{Scheme: gateScheme, Host: gateUrl, Path: gatePath}
 
 	// 监听价格变动和更新本地价格信息
 	prices := make(chan string, 1024)

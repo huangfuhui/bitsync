@@ -2,10 +2,11 @@ package services
 
 import (
 	"github.com/astaxie/beego"
-	"flag"
 	"net/url"
 	"github.com/gorilla/websocket"
 	"strings"
+	"github.com/bitly/go-simplejson"
+	"bitsync/util"
 )
 
 type OkexService struct {
@@ -16,9 +17,28 @@ func (service *OkexService) WatchOkex() {
 	okexUrl := beego.AppConfig.String("okex::ws_url")
 	okexPath := beego.AppConfig.String("okex::ws_path")
 
-	addr := flag.String("addr", okexUrl, "http service address")
-	flag.Parse()
-	conUrl := url.URL{Scheme: okexScheme, Host: *addr, Path: okexPath}
+	conUrl := url.URL{Scheme: okexScheme, Host: okexUrl, Path: okexPath}
+
+	// 监听价格变动和更新本地价格信息
+	prices := make(chan string, 1024)
+	go func() {
+		priceValidTime := beego.AppConfig.String("watch::price_valid_time")
+		for {
+			select {
+			case priceSlice := <-prices:
+				priceSli := strings.Split(priceSlice, ":")
+
+				key := "okex:" + priceSli[0]
+				value := priceSli[1]
+
+				con := util.Redis.Con()
+				err := util.Redis.SetEx(con, key, value, priceValidTime)
+				if err != nil {
+					beego.Error(err)
+				}
+			}
+		}
+	}()
 
 	for {
 		// 1.建立websocket通信
@@ -50,12 +70,29 @@ func (service *OkexService) WatchOkex() {
 
 		// 3.解析价格
 		for {
-			_, data, err := con.ReadMessage()
+			_, jsonData, err := con.ReadMessage()
 			if err != nil {
 				beego.Error(err)
 				return
 			}
-			beego.Info(data)
+			beego.Debug("【okex】", string(jsonData))
+
+			data, err := simplejson.NewJson(jsonData)
+			if err != nil {
+				beego.Error(err)
+				continue
+			}
+
+			channel, _ := data.GetIndex(0).Get("channel").String()
+			price, _ := data.GetIndex(0).Get("data").Get("last").String()
+			if channel == "" || price == "" {
+				continue
+			}
+
+			channelSli := strings.Split(channel, "_")
+			symbolPair := channelSli[3] + channelSli[4]
+
+			prices <- symbolPair + ":" + price
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package services
 
 import (
-	"flag"
 	"net/url"
 	"github.com/gorilla/websocket"
 	"github.com/astaxie/beego"
@@ -49,9 +48,7 @@ func (service *HuobiService) WatchHuobi() {
 	huobiUrl := beego.AppConfig.String("huobi::ws_url")
 	huobiPath := beego.AppConfig.String("huobi::ws_path")
 
-	addr := flag.String("addr", huobiUrl, "http service address")
-	flag.Parse()
-	conUrl := url.URL{Scheme: huobiScheme, Host: *addr, Path: huobiPath}
+	conUrl := url.URL{Scheme: huobiScheme, Host: huobiUrl, Path: huobiPath}
 
 	prices := make(chan string, 1024)
 	go func() {

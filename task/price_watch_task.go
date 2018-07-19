@@ -13,8 +13,8 @@ func (t *PriceWatchTask) Watch() {
 	dragonex := services.DragonexService{}
 	go dragonex.WatchDragonex()
 
-	// okex := services.OkexService{}
-	// go okex.WatchOkex()
+	okex := services.OkexService{}
+	go okex.WatchOkex()
 
 	gate := services.GateService{}
 	go gate.WatchGate()
