@@ -15,4 +15,7 @@ func (t *PriceWatchTask) Watch() {
 
 	// okex := services.OkexService{}
 	// go okex.WatchOkex()
+
+	gate := services.GateService{}
+	go gate.WatchGate()
 }
