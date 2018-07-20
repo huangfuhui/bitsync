@@ -148,5 +148,6 @@ func (service *GateService) WatchGate() {
 			}
 		}
 	retryConnect:
+		beego.Info("【gate】尝试重连websocket.")
 	}
 }

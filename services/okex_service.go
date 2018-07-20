@@ -72,7 +72,7 @@ func (service *OkexService) WatchOkex() {
 		for {
 			_, jsonData, err := con.ReadMessage()
 			if err != nil {
-				beego.Error(string(jsonData))
+				beego.Error(err)
 				beego.Info("【okex】websocket通信关闭.")
 				con.Close()
 				break
@@ -96,5 +96,6 @@ func (service *OkexService) WatchOkex() {
 
 			prices <- symbolPair + ":" + price
 		}
+		beego.Info("【okex】尝试重连websocket.")
 	}
 }
