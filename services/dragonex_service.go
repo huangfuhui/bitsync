@@ -22,7 +22,11 @@ func (service *DragonexService) WatchDragonex() {
 	dragonexScheme := beego.AppConfig.String("dragonex::http_scheme")
 	priceValidTime := beego.AppConfig.String("watch::price_valid_time")
 
-	service.initSymbol(dragonexUrl, dragonexScheme)
+	initRes := service.initSymbol(dragonexUrl, dragonexScheme)
+	if !initRes {
+		beego.Info("【龙交所】初始化交易对信息失败.")
+		return
+	}
 
 	apiMarketReal := beego.AppConfig.String("dragonex::api_market_real")
 	apiMarketRealSli := strings.Split(apiMarketReal, "@")
@@ -103,7 +107,7 @@ func (service *DragonexService) WatchDragonex() {
 }
 
 // 初始化交易对信息
-func (service *DragonexService) initSymbol(dragonexUrl, dragonexScheme string) {
+func (service *DragonexService) initSymbol(dragonexUrl, dragonexScheme string) bool {
 	client := &http.Client{}
 
 	// 查询龙交所交易对信息
@@ -113,46 +117,52 @@ func (service *DragonexService) initSymbol(dragonexUrl, dragonexScheme string) {
 	req, err := http.NewRequest(strings.ToUpper(apiAllSymbolSli[0]), conUrl.String(), nil)
 	if err != nil {
 		beego.Error(err)
-		return
+		return false
 	}
 
 	resp, err := client.Do(req)
-	defer resp.Body.Close()
+	defer func() {
+		if resp != nil {
+			resp.Body.Close()
+		}
+	}()
 	if err != nil {
 		beego.Error(err)
-		return
+		return false
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil || http.StatusOK != resp.StatusCode {
 		beego.Info("【龙交所】查询货币信息失败.")
 		beego.Error(err)
-		return
+		return false
 	}
 	beego.Info("【龙交所】成功查询货币信息.")
 
 	symbolData, err := simplejson.NewJson([]byte(body))
 	if err != nil {
 		beego.Error(err)
-		return
+		return false
 	}
 	symbolArr, err := symbolData.Get("data").Array()
 	if err != nil {
 		beego.Error(err)
-		return
+		return false
 	}
 	symbolQuantity := len(symbolArr)
 	for i := 0; i < symbolQuantity; i++ {
 		symbolName, err := symbolData.Get("data").GetIndex(i).Get("symbol").String()
 		if err != nil {
 			beego.Error(err)
-			return
+			return false
 		}
 		symbolId, err := symbolData.Get("data").GetIndex(i).Get("symbol_id").Int64()
 		if err != nil {
 			beego.Error(err)
-			return
+			return false
 		}
 		symbols[symbolName] = symbolId
 	}
+
+	return true
 }
