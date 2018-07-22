@@ -18,4 +18,7 @@ func (t *PriceWatchTask) Watch() {
 
 	gate := services.GateService{}
 	go gate.WatchGate()
+
+	bithumb := services.BithumbService{}
+	go bithumb.WatchBithumb()
 }
