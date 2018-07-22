@@ -7,9 +7,11 @@ insert into combo(name, price, sms_quantity) values
 
 insert into exchange(exchange_id, name_cn, name_en, official_website) values
 (1, '火币网', 'huobi', 'https://www.huobipro.com'),
-(2, '龙交所', 'dragonex', 'https://dragonex.im/'),
-(3, 'okex', 'okex', 'https://www.okex.com/'),
+(2, '龙交所', 'dragonex', 'https://dragonex.im'),
+(3, 'okex', 'okex', 'https://www.okex.com'),
 (4, '币安', 'binance', 'https://www.binance.com');
+(4, 'gate', 'gate', 'https://gate.io');
+(4, 'bithumb', 'bithumb', 'https://www.bithumb.com');
 
 insert into coin(name, name_cn, full_name, icoin, official_website, white_paper, issue_date, issue_amount, flow_amount, ico_price, blockchain_browser, introduction) values
 ('btc', '比特币', 'Bitcoin', '', 'https://bitcoin.org', '', '2009-01-03', 21000000, 0, '', '', ''),
