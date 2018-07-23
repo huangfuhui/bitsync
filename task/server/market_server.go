@@ -113,9 +113,6 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 	}
 	defer con.Close()
 
-	huobiUsdt := strings.Split(beego.AppConfig.String("huobi::usdt_pair"), ",")
-	dragonexUsdt := strings.Split(beego.AppConfig.String("dragonex::usdt_pair"), ",")
-
 	for {
 		symbol := SymbolRequest{}
 		err = con.ReadJSON(&symbol)
@@ -129,41 +126,31 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 			Msg:  "交易对不存在",
 		}
 
-		symbolPairKey := strings.Replace(symbol.Symbol, "/", "", -1)
+		symbolPairSli := strings.Split(symbol.Symbol, "/")
 
-		if symbol.ExchangeId == 1 {
-			for _, v := range huobiUsdt {
-				if v+"/usdt" == symbol.Symbol {
-					key := "huobi:" + symbolPairKey
-					redisCon := util.Redis.Con()
-					priceStr, _ := util.Redis.Get(redisCon, key)
-					price, _ := strconv.ParseFloat(priceStr, 64)
+		exchange := map[int]string{
+			1: "huobi",
+			2: "dragonex",
+			3: "okex",
+			4: "binance",
+			5: "gate",
+			6: "bithumb",
+		}
+		if symbol.ExchangeId <= 6 && symbol.ExchangeId >= 1 {
+			SymbolPairs := beego.AppConfig.String(exchange[symbol.ExchangeId] + "::" + symbolPairSli[1] + "_pair")
+			if strings.Contains(SymbolPairs, symbolPairSli[0]) {
+				key := exchange[symbol.ExchangeId] + ":" + strings.Replace(symbol.Symbol, "/", "", -1)
+				redisCon := util.Redis.Con()
+				priceStr, _ := util.Redis.Get(redisCon, key)
+				price, _ := strconv.ParseFloat(priceStr, 64)
 
-					market.Code = http.StatusOK
-					market.Response = append(market.Response, SymbolPair{
-						ExchangeId: 1,
-						Symbol:     symbol.Symbol,
-						Price:      price,
-					})
-					market.Msg = ""
-				}
-			}
-		} else if symbol.ExchangeId == 2 {
-			for _, v := range dragonexUsdt {
-				if v+"/usdt" == symbol.Symbol {
-					key := "dragonex:" + symbolPairKey
-					redisCon := util.Redis.Con()
-					priceStr, _ := util.Redis.Get(redisCon, key)
-					price, _ := strconv.ParseFloat(priceStr, 64)
-
-					market.Code = http.StatusOK
-					market.Response = append(market.Response, SymbolPair{
-						ExchangeId: 2,
-						Symbol:     symbol.Symbol,
-						Price:      price,
-					})
-					market.Msg = ""
-				}
+				market.Code = http.StatusOK
+				market.Response = append(market.Response, SymbolPair{
+					ExchangeId: 1,
+					Symbol:     symbol.Symbol,
+					Price:      price,
+				})
+				market.Msg = ""
 			}
 		} else {
 			market.Msg = "交易所ID非法"
