@@ -39,18 +39,26 @@ func market(w http.ResponseWriter, r *http.Request) {
 	}
 	con, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		beego.Error("[行情服务]upgrade:", err)
+		beego.Error("【行情服务】upgrade:", err)
 		return
 	}
 	defer con.Close()
 
-	huobiUsdt := strings.Split(beego.AppConfig.String("huobi::usdt_pair"), ",")
-	dragonexUsdt := strings.Split(beego.AppConfig.String("dragonex::usdt_pair"), ",")
+	exchange := map[string]int{
+		"huobi":    1,
+		"dragonex": 2,
+		"okex":     3,
+		"binance":  4,
+		"gate":     5,
+		"bithumb":  6,
+	}
+	marketConf := strings.Split(beego.AppConfig.String("watch::market"), ";")
+	beego.Debug("【行情服务】行情配置", marketConf)
 
 	for {
 		_, _, err := con.ReadMessage()
 		if err != nil {
-			beego.Warn("[行情服务]read:", err)
+			beego.Warn("【行情服务】read:", err)
 			break
 		}
 
@@ -59,32 +67,31 @@ func market(w http.ResponseWriter, r *http.Request) {
 			Msg:  "",
 		}
 
-		for _, v := range huobiUsdt {
-			key := "huobi:" + v + "usdt"
-			redisCon := util.Redis.Con()
-			priceStr, _ := util.Redis.Get(redisCon, key)
-			price, _ := strconv.ParseFloat(priceStr, 64)
-			market.Response = append(market.Response, SymbolPair{
-				ExchangeId: 1,
-				Symbol:     v + "/usdt",
-				Price:      price,
-			})
-		}
-		for _, v := range dragonexUsdt {
-			key := "dragonex:" + v + "usdt"
-			redisCon := util.Redis.Con()
-			priceStr, _ := util.Redis.Get(redisCon, key)
-			price, _ := strconv.ParseFloat(priceStr, 64)
-			market.Response = append(market.Response, SymbolPair{
-				ExchangeId: 2,
-				Symbol:     v + "/usdt",
-				Price:      price,
-			})
+		for _, v := range marketConf {
+			exchangeSymbols := strings.Split(v, ":")
+			exchangeId := exchange[exchangeSymbols[0]]
+			for _, symbol := range strings.Split(exchangeSymbols[1], ",") {
+				pairs := strings.Split(beego.AppConfig.String(exchangeSymbols[0]+"::"+symbol+"_pair"), ",")
+
+				for _, sp := range pairs {
+					key := exchangeSymbols[0] + ":" + sp + symbol
+
+					redisCon := util.Redis.Con()
+					priceStr, _ := util.Redis.Get(redisCon, key)
+					price, _ := strconv.ParseFloat(priceStr, 64)
+
+					market.Response = append(market.Response, SymbolPair{
+						ExchangeId: exchangeId,
+						Symbol:     sp + "/" + symbol,
+						Price:      price,
+					})
+				}
+			}
 		}
 
 		err = con.WriteJSON(market)
 		if err != nil {
-			beego.Warn("[行情服务]write:", err)
+			beego.Warn("【行情服务】write:", err)
 		}
 	}
 }
@@ -101,7 +108,7 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 	}
 	con, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		beego.Error("[行情服务]upgrade:", err)
+		beego.Error("【行情服务】upgrade:", err)
 		return
 	}
 	defer con.Close()
@@ -113,7 +120,7 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 		symbol := SymbolRequest{}
 		err = con.ReadJSON(&symbol)
 		if err != nil {
-			beego.Warn("[行情服务]read:", err)
+			beego.Warn("【行情服务】read:", err)
 			return
 		}
 
@@ -164,7 +171,7 @@ func symbol(w http.ResponseWriter, r *http.Request) {
 
 		err = con.WriteJSON(market)
 		if err != nil {
-			beego.Warn("[行情服务]write:", err)
+			beego.Warn("【行情服务】write:", err)
 		}
 	}
 }
@@ -174,6 +181,6 @@ func MarketServer() {
 	http.HandleFunc("/symbol", symbol)
 	err := http.ListenAndServe("localhost:8088", nil)
 	if err != nil {
-		beego.Error("[行情服务]", err)
+		beego.Error("【行情服务】", err)
 	}
 }
