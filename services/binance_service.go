@@ -40,9 +40,10 @@ func (service *BinanceService) WatchBinance() {
 		}
 	}()
 
+	requestUrl, _ := url.QueryUnescape(conUrl.String())
 	for {
 		// 1.建立websocket通信
-		con, _, err := websocket.DefaultDialer.Dial(conUrl.String(), nil)
+		con, _, err := websocket.DefaultDialer.Dial(requestUrl, nil)
 		if err != nil {
 			beego.Error("【binance】dial: " + err.Error())
 			continue
