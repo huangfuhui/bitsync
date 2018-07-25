@@ -9,6 +9,7 @@ import (
 	"bitsync/controllers/pay"
 	"bitsync/middleware"
 	"bitsync/controllers/member"
+	"bitsync/controllers/market"
 )
 
 func init() {
@@ -100,5 +101,13 @@ func init() {
 		beego.NSRouter("/get", &sms.TaskController{}, "post:Get"),
 	)
 
-	beego.AddNamespace(wechatNs, smsNs, loginNs, accountNs, memberNs, comboNs, taskNs)
+	// 市场行情
+	marketNs := beego.NewNamespace("/market",
+		beego.NSBefore(func(ctx *context.Context) {
+		}),
+
+		beego.NSRouter("/exchange", &market.ExchangeController{}, "get:List"),
+	)
+
+	beego.AddNamespace(wechatNs, smsNs, loginNs, accountNs, memberNs, comboNs, taskNs, marketNs)
 }
