@@ -59,3 +59,22 @@ where uid = ?
 
 	return nil
 }
+
+// 待执行的任务列表
+func (m *TaskThresholdValueModel) WaitExecuteTaskList() ([]orm.Params, error) {
+	query := `
+select b.id, a.uid, a.symbol_pair, a.exchange_id, a.threshold_value, a.deviation
+from task_threshold_value a
+join sms_task b
+on a.id = b.task_id
+and b.status = 0
+and b.type = 1
+`
+	var res []orm.Params
+	_, err := orm.NewOrm().Raw(query).Values(&res)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
