@@ -33,13 +33,34 @@ func init() {
 			return redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
 		},
 	}
-	beego.Info("初始化Redis连接池.")
 	_, err := pool.Get().Do("ping")
 	if err != nil {
 		beego.Error(err)
 	}
+	beego.Info("初始化Redis价格连接池成功.")
 
 	Redis = RedisCli{Pool: pool}
+}
+
+// 新建一个连接池
+func NewPool(db int) RedisCli {
+	dbNum := redis.DialDatabase(db)
+	pool := &redis.Pool{
+		MaxIdle:     redisMaxIdle,
+		MaxActive:   redisMaxActive,
+		IdleTimeout: time.Duration(redisIdleTimeout) * time.Second,
+		Wait:        redisWait,
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+		},
+	}
+	_, err := pool.Get().Do("ping")
+	if err != nil {
+		beego.Error("【Redis】", err)
+		return RedisCli{}
+	}
+
+	return RedisCli{Pool: pool}
 }
 
 // 切换数据库
