@@ -114,6 +114,12 @@ func (r *RedisCli) SRem(con redis.Conn, key, member string) error {
 	return err
 }
 
+func (r *RedisCli) SMembers(con redis.Conn, key string) ([]string, error) {
+	members, err := redis.Strings(con.Do("smembers", key))
+	defer r.Close(con)
+	return members, err
+}
+
 func (r *RedisCli) SIsMember(con redis.Conn, key, member string) (bool, error) {
 	exist, err := redis.Bool(con.Do("sismember", key, member))
 	defer r.Close(con)
