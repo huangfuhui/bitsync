@@ -90,6 +90,42 @@ func (r *RedisCli) SetEx(con redis.Conn, key, value, expire string) error {
 	return err
 }
 
+func (r *RedisCli) LPush(con redis.Conn, key, value string) error {
+	_, err := con.Do("lpush", key, value)
+	defer r.Close(con)
+	return err
+}
+
+func (r *RedisCli) Lpop(con redis.Conn, key string) (string, error) {
+	res, err := redis.String(con.Do("lpop", key))
+	defer r.Close(con)
+	return res, err
+}
+
+func (r *RedisCli) SAdd(con redis.Conn, key, member string) error {
+	_, err := con.Do("sadd", key, member)
+	defer r.Close(con)
+	return err
+}
+
+func (r *RedisCli) SRem(con redis.Conn, key, member string) error {
+	_, err := con.Do("srem", key, member)
+	defer r.Close(con)
+	return err
+}
+
+func (r *RedisCli) SIsMember(con redis.Conn, key, member string) (bool, error) {
+	exist, err := redis.Bool(con.Do("sismember", key, member))
+	defer r.Close(con)
+	return exist, err
+}
+
+func (r *RedisCli) SCard(con redis.Conn, key string) (int, error) {
+	nums, err := redis.Int(con.Do("scard", key))
+	defer r.Close(con)
+	return nums, err
+}
+
 // 获取连接
 func (r *RedisCli) Con() redis.Conn {
 	return r.Pool.Get()
