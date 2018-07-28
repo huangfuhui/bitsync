@@ -41,6 +41,7 @@ func init() {
 		new(sms.SmsWallet),
 		new(sms.SmsConsumeRecord),
 		new(sms.SmsTask),
+		new(sms.SmsFailedTask),
 		new(sms.TaskThresholdValue),
 		new(coin.Coin),
 		new(coin.Exchange),
