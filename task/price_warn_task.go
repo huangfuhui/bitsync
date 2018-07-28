@@ -8,7 +8,6 @@ import (
 	smsObj "bitsync/object/sms"
 	"strconv"
 	"github.com/astaxie/beego/orm"
-	"bitsync/services"
 	"bitsync/object"
 	"time"
 )
@@ -31,6 +30,8 @@ func (task *WarnTask) Warn() {
 	redis := util.NewPool(db)
 	con := redis.Con()
 
+	defer redis.ClosePool(con)
+
 	// 1.获取所有待执行任务
 	m := sms.TaskThresholdValueModel{}
 	taskList, err := m.WaitExecuteTaskList()
@@ -44,12 +45,12 @@ func (task *WarnTask) Warn() {
 	// 2.存放至Redis中
 	for _, v := range taskList {
 		id := v["id"]
-		exchangeId := v["exchange_id"]
+		exchangeId, _ := strconv.Atoi(v["exchange_id"].(string))
 		thresholdValue := v["threshold_value"]
 		deviation := v["deviation"]
 
 		key := strings.Replace(v["symbol_pair"].(string), "_", "", -1)
-		value := exchange[exchangeId.(int)] + ":" + id.(string) + "：" + deviation.(string) + ":" + thresholdValue.(string)
+		value := exchange[exchangeId] + ":" + id.(string) + "：" + deviation.(string) + ":" + thresholdValue.(string)
 		err := redis.SAdd(con, key, value)
 		if err != nil {
 			beego.Error("【提醒任务】", err)
@@ -104,7 +105,7 @@ func (task *WarnTask) Warn() {
 
 // 发短信提醒用户
 func remind(taskInfo string) {
-	tplId, _ := beego.AppConfig.Int64("sms::tpl_price_warn")
+	// tplId, _ := beego.AppConfig.Int64("sms::tpl_price_warn")
 	info := strings.Split(taskInfo, ":")
 	id, _ := strconv.Atoi(info[1])
 
@@ -133,6 +134,8 @@ where a.id = ?
 		return
 	}
 	task := tasks[0]
+	UID, _ := strconv.Atoi(task["uid"].(string))
+	smsTaskId, _ := strconv.Atoi(task["id"].(string))
 
 	// 2.检查任务状态
 	taskStatus, _ := strconv.Atoi(task["status"].(string))
@@ -156,16 +159,51 @@ where a.id = ?
 	}
 
 	// 4.扣减预消费
-
-	// 5.发送短信
-	s := services.SmsService{}
-	err = s.SendSingle("86", task["handset"].(string), []string{strings.Replace(task["symbol_pair"].(string), "_", "/", -1), task["threshold_value"].(string)}, tplId)
+	query = `
+update sms_wallet
+set prepare_consume = prepare_consume - 1
+where uid = ?
+`
+	_, err = o.Raw(query, smsTaskId).Exec()
 	if err != nil {
-		o.Commit()
-		beego.Error("【提醒任务】短信发送失败: ", err)
-
-		// 退款
-
+		o.Rollback()
+		beego.Error("【提醒任务】扣减预消费金额失败: ", err)
 		return
 	}
+
+	// 5.发送短信
+	// s := services.SmsService{}
+	// err = s.SendSingle("86", task["handset"].(string), []string{strings.Replace(task["symbol_pair"].(string), "_", "/", -1), task["threshold_value"].(string)}, tplId)
+	if err != nil {
+		beego.Error("【提醒任务】短信发送失败: ", err)
+
+		// 5.1退款
+		err = refund(smsTaskId)
+		if err != nil {
+			beego.Error("【提醒任务】退款失败: ", err)
+		}
+
+		// 5.2记录失败任务
+		failed := sms.SmsFailedTaskModel{}
+		err = failed.Add(UID, smsTaskId, err.Error())
+		if err != nil {
+			beego.Error("【提醒任务】", err)
+		}
+	}
+
+	err = o.Commit()
+	if err != nil {
+		beego.Error("【提醒任务】", err)
+	}
+}
+
+// 退款
+func refund(UID int) error {
+	query := `
+update sms_wallet
+set balance = balance + 1
+where uid = ?
+`
+	_, err := orm.NewOrm().Raw(query, UID).Exec()
+	return err
 }
