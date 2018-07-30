@@ -11,15 +11,6 @@ const (
 	EXCHANGE_BITHUMB   = 6
 )
 
-var EXCHANGE = map[int]string{
-	1: "huobi",
-	2: "dragonex",
-	3: "okex",
-	4: "binance",
-	5: "gate",
-	6: "bithumb",
-}
-
 type Exchange struct {
 	object.Base
 	ExchangeId      int

@@ -9,9 +9,17 @@ import (
 	"github.com/astaxie/beego"
 	"strconv"
 	model "bitsync/models/sms"
-	coinObj "bitsync/object/coin"
 	"github.com/astaxie/beego/orm"
 )
+
+var exchange = map[int]string{
+	1: "huobi",
+	2: "dragonex",
+	3: "okex",
+	4: "binance",
+	5: "gate",
+	6: "bithumb",
+}
 
 type TaskLogic struct {
 	logic.BaseLogic
@@ -30,12 +38,7 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 		return orm.Params{}
 	}
 
-	key := ""
-	if exchangeId == coinObj.EXCHANGE_HUOBI {
-		key = "huobi:" + coinA.Name + "usdt"
-	} else if exchangeId == coinObj.EXCHANGE_DRAGEONEX {
-		key = "dragonex:" + coinA.Name + "usdt"
-	}
+	key := exchange[exchangeId] + ":" + coinA.Name + "usdt"
 
 	// 查询当前价格
 	redis := util.Cli{}
@@ -80,11 +83,22 @@ func (l *TaskLogic) Add(taskType, exchangeId int, symbolPair string, deviation i
 		Deviation:      deviation,
 	}
 	m := model.TaskThresholdValueModel{}
-	err = m.Add(&task)
+	smsTaskId, err := m.Add(&task)
 	if err != nil {
 		beego.Error(err)
 		l.Warn("添加预警失败")
 		return orm.Params{}
+	}
+
+	// 更新任务到Redis执行队列中
+	db, _ = beego.AppConfig.Int("redis_db_price_warn")
+	redisCli := util.Cli{}
+	redisCli.Select(db)
+	key = strings.Replace(symbolPair, "_", "", -1)
+	value = strconv.Itoa(exchangeId) + ":" + strconv.Itoa(smsTaskId) + ":" + strconv.Itoa(deviation) + ":" + value
+	err = redisCli.SAdd(key, value)
+	if err != nil {
+		beego.Error(err)
 	}
 
 	return orm.Params{"task_id": task.Id}

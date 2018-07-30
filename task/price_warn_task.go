@@ -22,13 +22,16 @@ var exchange = map[int]string{
 	6: "bithumb",
 }
 
+var redis util.RedisCli
+
 type WarnTask struct {
 }
 
 // 价格任务监控
 func (task *WarnTask) Warn() {
 	db, _ := beego.AppConfig.Int("redis_db_price_warn")
-	redis, err := util.NewPool(db)
+	var err error
+	redis, err = util.NewPool(db)
 	if err != nil {
 		beego.Error("【Redis】", err)
 		return
@@ -145,12 +148,16 @@ where a.id = ?
 	task := tasks[0]
 	UID, _ := strconv.Atoi(task["uid"].(string))
 	smsTaskId, _ := strconv.Atoi(task["id"].(string))
+	symbolPair := task["symbol_pair"].(string)
 
 	// 2.检查任务状态
 	taskStatus, _ := strconv.Atoi(task["status"].(string))
 	if taskStatus != smsObj.STATUS_WAIT {
 		o.Rollback()
-		beego.Error("【提醒任务】任务非等待执行状态: ", task)
+
+		beego.Debug("【提醒任务】任务非等待执行状态: ", task)
+		redis.SRem(redis.Con(), strings.Replace(symbolPair, "_", "", -1), taskInfo)
+
 		return
 	}
 
@@ -187,7 +194,7 @@ where uid = ?
 
 	// 5.发送短信
 	s := services.SmsService{}
-	msgErr := s.SendSingle("86", task["handset"].(string)+"asd", []string{strings.Replace(task["symbol_pair"].(string), "_", "/", -1), task["threshold_value"].(string)}, tplId)
+	msgErr := s.SendSingle("86", task["handset"].(string)+"asd", []string{strings.Replace(symbolPair, "_", "/", -1), task["threshold_value"].(string)}, tplId)
 	if msgErr != nil {
 		beego.Error("【提醒任务】短信发送失败: ", msgErr)
 

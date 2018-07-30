@@ -11,7 +11,7 @@ type TaskThresholdValueModel struct {
 }
 
 // 新建任务
-func (m *TaskThresholdValueModel) Add(task *sms.TaskThresholdValue) (err error) {
+func (m *TaskThresholdValueModel) Add(task *sms.TaskThresholdValue) (smsTaskId int, err error) {
 	UID := task.UID
 
 	o := orm.NewOrm()
@@ -27,7 +27,7 @@ where uid = ?
 	if err != nil {
 		o.Rollback()
 
-		return err
+		return 0, err
 	}
 
 	// 2.添加任务
@@ -35,7 +35,7 @@ where uid = ?
 	if err != nil {
 		o.Rollback()
 
-		return err
+		return 0, err
 	}
 
 	// 3.添加任务列表
@@ -49,15 +49,15 @@ where uid = ?
 	if err != nil {
 		o.Rollback()
 
-		return err
+		return 0, err
 	}
 
 	err = o.Commit()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return taskList.Id, nil
 }
 
 // 待执行的任务列表
