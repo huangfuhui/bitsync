@@ -43,7 +43,7 @@ func init() {
 }
 
 // 新建一个连接池
-func NewPool(db int) RedisCli {
+func NewPool(db int) (RedisCli, error) {
 	dbNum := redis.DialDatabase(db)
 	pool := &redis.Pool{
 		MaxIdle:     redisMaxIdle,
@@ -56,11 +56,10 @@ func NewPool(db int) RedisCli {
 	}
 	_, err := pool.Get().Do("ping")
 	if err != nil {
-		beego.Error("【Redis】", err)
-		return RedisCli{}
+		return RedisCli{}, err
 	}
 
-	return RedisCli{Pool: pool}
+	return RedisCli{Pool: pool}, nil
 }
 
 // 切换数据库
@@ -143,7 +142,7 @@ func (r *RedisCli) Close(con redis.Conn) error {
 }
 
 // 关闭连接池
-func (r *RedisCli) ClosePool(con redis.Conn) error {
+func (r *RedisCli) ClosePool() error {
 	return r.Pool.Close()
 }
 
