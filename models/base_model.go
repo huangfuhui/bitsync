@@ -26,7 +26,7 @@ func init() {
 	mysqlPort := beego.AppConfig.String("mysql_port")
 	mysqlDb := beego.AppConfig.String("mysql_db")
 
-	dataSource := mysqlUser + ":" + mysqlPassword + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/" + mysqlDb + "?charset=utf8"
+	dataSource := mysqlUser + ":" + mysqlPassword + "@tcp(" + mysqlHost + ":" + mysqlPort + ")/" + mysqlDb + "?charset=utf8&loc=Local"
 	// 注册数据库
 	err := orm.RegisterDataBase("default", "mysql", dataSource)
 	if err != nil {
