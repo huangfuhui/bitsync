@@ -215,6 +215,22 @@ func (cli *Cli) SetEx(key string, seconds int) error {
 	return err
 }
 
+func (cli *Cli) SAdd(key, member string) error {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	_, err := con.Do("sadd", key, member)
+	defer con.Close()
+	return err
+}
+
+func (cli *Cli) SRem(key, member string) error {
+	dbNum := redis.DialDatabase(cli.DB)
+	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
+	_, err := con.Do("srem", key, member)
+	defer con.Close()
+	return err
+}
+
 func (cli *Cli) Exists(key string) (bool, error) {
 	dbNum := redis.DialDatabase(cli.DB)
 	con, _ := redis.Dial(redisScheme, redisHost+":"+redisPort, dbNum)
