@@ -10,8 +10,8 @@ func (task *BaseTask) Execute() {
 
 	// 价格监控
 	go func() {
-		// priceWatch := PriceWatchTask{}
-		// priceWatch.Watch()
+		priceWatch := PriceWatchTask{}
+		priceWatch.Watch()
 	}()
 
 	// 价格提醒
