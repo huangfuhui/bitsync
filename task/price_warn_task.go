@@ -105,7 +105,7 @@ func (task *WarnTask) Warn() {
 				price, _ := strconv.ParseFloat(currentPrice, 64)
 				deviation, _ := strconv.Atoi(info[2])
 				thresholdValue, _ := strconv.ParseFloat(info[3], 64)
-				if (deviation == smsObj.DEVIATION_GT && price > 0 && thresholdValue >= price) || (deviation == smsObj.DEVIATION_LT && price > 0 && thresholdValue <= price) {
+				if (deviation == smsObj.DEVIATION_GT && price > 0 && thresholdValue <= price) || (deviation == smsObj.DEVIATION_LT && price > 0 && thresholdValue >= price) {
 					beego.Info("【提醒任务】", task)
 					go remind(task)
 					redis.SRem(redis.Con(), v, task)
