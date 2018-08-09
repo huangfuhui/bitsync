@@ -54,11 +54,14 @@ func (service *GateService) WatchGate() {
 
 		// 2.价格信息订阅
 		beego.Info("【gate】开始价格订阅.")
-		usdtPairs := beego.AppConfig.String("gate::usdt_pair")
-		usdtSlice := strings.Split(usdtPairs, ",")
+		exchangeSymbols := strings.Split(beego.AppConfig.String("gate::exchange_symbol"), ",")
 		var subPairs []string
-		for _, v := range usdtSlice {
-			subPairs = append(subPairs, `"`+strings.ToUpper(v)+`_USDT"`)
+		for _, v := range exchangeSymbols {
+			pairs := beego.AppConfig.String("gate::" + v + "_pair")
+			pairSlice := strings.Split(pairs, ",")
+			for _, t := range pairSlice {
+				subPairs = append(subPairs, `"`+strings.ToUpper(t)+`_`+strings.ToUpper(v)+`"`)
+			}
 		}
 		err = con.WriteMessage(websocket.TextMessage, []byte(`{"id":888,"method":"ticker.subscribe", "params":[`+strings.Join(subPairs, ",")+`]}`))
 		if err != nil {
