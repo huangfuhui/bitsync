@@ -83,31 +83,35 @@ func (service *HuobiService) WatchHuobi() {
 
 		// 2.价格信息订阅
 		beego.Info("【火币】开始价格订阅.")
-		usdtPairs := beego.AppConfig.String("huobi::usdt_pair")
-		usdtSlice := strings.Split(usdtPairs, ",")
-		for _, v := range usdtSlice {
-			// 发起订阅
-			err := con.WriteMessage(websocket.TextMessage, []byte(`{"sub":"market.`+v+`usdt.kline.1min","id":"`+v+`usdt"}`))
-			if err != nil {
-				beego.Error(err.Error())
-				beego.Info("【火币】websocket通信关闭.")
-				con.Close()
-				return
-			}
+		exchangeSymbols := strings.Split(beego.AppConfig.String("huobi::exchange_symbol"), ",")
+		for _, v := range exchangeSymbols {
+			pairs := beego.AppConfig.String("huobi::" + v + "_pair")
+			pairsSlice := strings.Split(pairs, ",")
+			for _, pair := range pairsSlice {
+				// 发起订阅
+				symbol := pair + v
+				err := con.WriteMessage(websocket.TextMessage, []byte(`{"sub":"market.`+symbol+`.kline.1min","id":"`+symbol+`"}`))
+				if err != nil {
+					beego.Error(err.Error())
+					beego.Info("【火币】websocket通信关闭.")
+					con.Close()
+					return
+				}
 
-			// 获取订阅结果
-			subRes, err := service.onlySubResult(con)
-			if err != nil {
-				beego.Error(err)
-				beego.Info("【火币】websocket通信关闭.")
-				con.Close()
-				return
-			}
+				// 获取订阅结果
+				subRes, err := service.onlySubResult(con)
+				if err != nil {
+					beego.Error(err)
+					beego.Info("【火币】websocket通信关闭.")
+					con.Close()
+					return
+				}
 
-			if subRes.Status == "ok" {
-				beego.Debug("【火币】" + subRes.Subbed + "订阅成功.")
-			} else if subRes.Status == "error" {
-				beego.Error("【火币】价格订阅失败,subbed: " + subRes.Subbed)
+				if subRes.Status == "ok" {
+					beego.Debug("【火币】" + subRes.Subbed + "订阅成功.")
+				} else if subRes.Status == "error" {
+					beego.Error("【火币】价格订阅失败,subbed: " + subRes.Subbed)
+				}
 			}
 		}
 		beego.Info("【火币】价格订阅成功.")

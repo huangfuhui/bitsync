@@ -33,7 +33,11 @@ func (service *DragonexService) WatchDragonex() {
 
 	defer beego.Info("【龙交所】价格信息同步关闭.")
 
-	usdtPair := beego.AppConfig.String("dragonex::usdt_pair")
+	exchangeSymbols := strings.Split(beego.AppConfig.String("dragonex::exchange_symbol"), ",")
+	var pairInfo = make(map[string]string)
+	for _, v := range exchangeSymbols {
+		pairInfo[v] = beego.AppConfig.String("dragonex::" + v + "_pair")
+	}
 
 	beego.Info("【龙交所】价格信息同步开始.")
 	for {
@@ -41,7 +45,7 @@ func (service *DragonexService) WatchDragonex() {
 		for k, v := range symbols {
 			// 过滤不需要的货币
 			symbolSli := strings.Split(k, "_")
-			if !strings.Contains(usdtPair, symbolSli[0]) && symbolSli[1] != "usdt" {
+			if !strings.Contains(pairInfo[symbolSli[1]], symbolSli[0]) {
 				continue
 			}
 
