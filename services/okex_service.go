@@ -54,10 +54,13 @@ func (service *OkexService) WatchOkex() {
 		// 2.批量订阅价格
 		beego.Info("【okex】开始价格订阅.")
 		var subStrSli []string
-		usdtPairs := beego.AppConfig.String("okex::usdt_pair")
-		usdtSlice := strings.Split(usdtPairs, ",")
-		for _, v := range usdtSlice {
-			subStrSli = append(subStrSli, "{'event':'addChannel','channel':'ok_sub_spot_"+v+"_usdt_ticker'}")
+		exchangeSymbols := strings.Split(beego.AppConfig.String("okex::exchange_symbol"), ",")
+		for _, v := range exchangeSymbols {
+			pairs := beego.AppConfig.String("okex::" + v + "_pair")
+			pairSlice := strings.Split(pairs, ",")
+			for _, t := range pairSlice {
+				subStrSli = append(subStrSli, "{'event':'addChannel','channel':'ok_sub_spot_"+t+"_"+v+"_ticker'}")
+			}
 		}
 
 		err = con.WriteMessage(websocket.TextMessage, []byte("["+strings.Join(subStrSli, ",")+"]"))
